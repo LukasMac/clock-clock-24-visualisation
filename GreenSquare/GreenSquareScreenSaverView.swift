@@ -32,15 +32,10 @@ class GreenSquareScreenSaverView: ScreenSaverView {
     
     override func draw(_ rect: NSRect) {
         super.draw(rect)
-        
-        var squareFrame = NSRect.zero
-        squareFrame.size = NSSize(width: 150, height: 150)
-        squareFrame.origin.x = (rect.width - squareFrame.width) / 2.0
-        squareFrame.origin.y = (rect.height - squareFrame.height) / 2.0
-        greenSquareView.frame = squareFrame
+        greenSquareView.frame = rect
     }
-    
+
     override func animateOneFrame() {
-        greenSquareView.rotate(byDegrees: 1)
+        greenSquareView.rotateSphere(byDegrees: 1)
     }
 }
