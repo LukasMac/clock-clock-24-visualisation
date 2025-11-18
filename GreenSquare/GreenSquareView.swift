@@ -58,39 +58,38 @@ class GreenSquareView: NSView {
             // Create a pivot point entity (invisible, just for rotation)
             let pivotMinuteHand = Entity()
             pivotMinuteHand.name = "SpherePivot"
-            pivotMinuteHand.position = [0, 0.4, 0.5] // This is where the pivot point will be
+            pivotMinuteHand.position = [0, 0, 0.5] // This is where the pivot point will be
             sphereEntity.addChild(pivotMinuteHand)
 
             // Create the movable box
-            let minuteHand = MeshResource.generateBox(width: 0.02, height: 1, depth: 0.02)
+            let minuteHandHeight = Float(0.8);
+            let minuteHand = MeshResource.generateBox(width: 0.2, height: minuteHandHeight, depth: 0.02)
             var minuteHandMeterial = SimpleMaterial()
             minuteHandMeterial.color = .init(tint: .black, texture: nil)
             minuteHandMeterial.metallic = .init(floatLiteral: 0.8)
 
             let movableMinuteHand = ModelEntity(mesh: minuteHand, materials: [minuteHandMeterial])
             movableMinuteHand.name = "MovableSphere"
-            // Offset the box so its bottom end is at the pivot point
-            // Height is 1, so offset by 0.5 upward to put the bottom at pivot
-            movableMinuteHand.position = [0, 0.5, 0]
+            movableMinuteHand.position = [0, minuteHandHeight / 2, 0]
 
             pivotMinuteHand.addChild(movableMinuteHand)
             
             
             let pivotHourHand = Entity()
             pivotHourHand.name = "PivotHourHand"
-            pivotHourHand.position = [0, 0.4, 0.5]
+            pivotHourHand.position = [0, 0, 0.5]
             sphereEntity.addChild(pivotHourHand)
+            
             // Create the movable box
-            let hourHand = MeshResource.generateBox(width: 0.2, height: 0.8, depth: 0.02)
+            let hourHandHeight = Float(0.7);
+            let hourHand = MeshResource.generateBox(width: 0.2, height: hourHandHeight, depth: 0.02)
             var hourHandMaterial = SimpleMaterial()
             hourHandMaterial.color = .init(tint: .black, texture: nil)
             hourHandMaterial.metallic = .init(floatLiteral: 0.8)
 
             let movableHourHand = ModelEntity(mesh: hourHand, materials: [hourHandMaterial])
             movableHourHand.name = "MovableHourHand"
-            // Offset the box so its bottom end is at the pivot point
-            // Height is 0.8, so offset by 0.4 upward to put the bottom at pivot
-            movableHourHand.position = [0, 0.4, 0]
+            movableHourHand.position = [0, hourHandHeight / 2, 0]
 
             pivotHourHand.addChild(movableHourHand)
 
