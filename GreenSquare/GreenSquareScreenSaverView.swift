@@ -14,7 +14,7 @@ class GreenSquareScreenSaverView: ScreenSaverView {
     
     override init?(frame: CGRect, isPreview: Bool) {
         super.init(frame: frame, isPreview: isPreview)
-        self.animationTimeInterval = 1 / 30.0
+        self.animationTimeInterval = 1 / 120.0
         addSubview(greenSquareView)
     }
     
@@ -36,6 +36,6 @@ class GreenSquareScreenSaverView: ScreenSaverView {
     }
 
     override func animateOneFrame() {
-        greenSquareView.rotateSphere(byDegrees: 1)
+       greenSquareView.rotateSphere(byDegrees: 1)
     }
 }
