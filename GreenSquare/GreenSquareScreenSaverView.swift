@@ -10,32 +10,34 @@ import Foundation
 import ScreenSaver
 
 class GreenSquareScreenSaverView: ScreenSaverView {
-    let greenSquareView = GreenSquareView()
-    
+    let clockGridView = ClockGridView(frame: .zero)
+    let orchestrator = ClockOrchestrator(rows: ClockGridView.rows, columns: ClockGridView.columns)
+
     override init?(frame: CGRect, isPreview: Bool) {
         super.init(frame: frame, isPreview: isPreview)
-        self.animationTimeInterval = 1 / 120.0
-        addSubview(greenSquareView)
+        self.animationTimeInterval = 1 / 60.0
+        addSubview(clockGridView)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func startAnimation() {
         super.startAnimation()
     }
-    
+
     override func stopAnimation() {
         super.stopAnimation()
     }
-    
+
     override func draw(_ rect: NSRect) {
         super.draw(rect)
-        greenSquareView.frame = rect
+        clockGridView.frame = rect
     }
 
     override func animateOneFrame() {
-       greenSquareView.rotateSphere(byDegrees: 1)
+        orchestrator.tick()
+        orchestrator.applyToGrid(clockGridView)
     }
 }

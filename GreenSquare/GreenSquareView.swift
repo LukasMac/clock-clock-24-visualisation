@@ -13,8 +13,8 @@ import ModelIO
 class GreenSquareView: NSView {
     private var arView: ARView!
     private var sphereEntity: ModelEntity!
-    private var currentRotation: Float = 0
-    private var lightEntity: PointLight!
+    private var pivotMinuteHand: Entity?
+    private var pivotHourHand: Entity?
 
     init() {
         super.init(frame: .zero)
@@ -56,10 +56,10 @@ class GreenSquareView: NSView {
 
             // Since the USDZ is a single mesh, add separate child objects you can manipulate
             // Create a pivot point entity (invisible, just for rotation)
-            let pivotMinuteHand = Entity()
-            pivotMinuteHand.name = "SpherePivot"
-            pivotMinuteHand.position = [0, 0, 0.5] // This is where the pivot point will be
-            sphereEntity.addChild(pivotMinuteHand)
+            pivotMinuteHand = Entity()
+            pivotMinuteHand!.name = "PivotMinuteHand"
+            pivotMinuteHand!.position = [0, 0, 0.5] // This is where the pivot point will be
+            sphereEntity.addChild(pivotMinuteHand!)
 
             // Create the movable box
             let minuteHandHeight = Float(0.8);
@@ -72,13 +72,13 @@ class GreenSquareView: NSView {
             movableMinuteHand.name = "MovableSphere"
             movableMinuteHand.position = [0, minuteHandHeight / 2, 0]
 
-            pivotMinuteHand.addChild(movableMinuteHand)
-            
-            
-            let pivotHourHand = Entity()
-            pivotHourHand.name = "PivotHourHand"
-            pivotHourHand.position = [0, 0, 0.5]
-            sphereEntity.addChild(pivotHourHand)
+            pivotMinuteHand!.addChild(movableMinuteHand)
+
+
+            pivotHourHand = Entity()
+            pivotHourHand!.name = "PivotHourHand"
+            pivotHourHand!.position = [0, 0, 0.5]
+            sphereEntity.addChild(pivotHourHand!)
             
             // Create the movable box
             let hourHandHeight = Float(0.7);
@@ -91,10 +91,7 @@ class GreenSquareView: NSView {
             movableHourHand.name = "MovableHourHand"
             movableHourHand.position = [0, hourHandHeight / 2, 0]
 
-            pivotHourHand.addChild(movableHourHand)
-
-            
-            
+            pivotHourHand!.addChild(movableHourHand)
 
             // Print all entity names in the model hierarchy
             printEntityHierarchy(sphereEntity)
@@ -108,23 +105,12 @@ class GreenSquareView: NSView {
             anchor.addChild(sphereEntity)
         }
 
-        // Add main point light
-        let mainLight = PointLight()
-        mainLight.light.intensity = 5000
-        mainLight.light.color = .white
-        mainLight.position = [0.3, 0.3, 0.3]
-        anchor.addChild(mainLight)
-        lightEntity = mainLight
-
         // Add fill light
         let fillLight = PointLight()
         fillLight.light.intensity = 2000
         fillLight.light.color = .white
         fillLight.position = [-0.2, -0.1, 0.2]
         anchor.addChild(fillLight)
-
-        // Animate the main light
-        animateLight()
     }
 
     private func loadModelFromUSDZ(named name: String) throws -> ModelEntity? {
@@ -183,22 +169,13 @@ class GreenSquareView: NSView {
             object.scale = scale
         }
     }
+    
+    /// Sets the clock hands to absolute angles (in degrees, 0 = 12 o'clock, clockwise)
+    func setClockHands(minuteHandDeg: Float, hourHandDeg: Float) {
+        let minuteRadians = -minuteHandDeg * .pi / 180.0
+        let hourRadians = -hourHandDeg * .pi / 180.0
 
-    private func animateLight() {
-        Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            let time = Date().timeIntervalSinceReferenceDate
-            let x = Float(sin(time * 0.5)) * 0.3
-            self.lightEntity.position.x = x
-        }
-    }
-
-    func rotateSphere(byDegrees degrees: CGFloat) {
-        let radians = Float(degrees * .pi / 180.0)
-        currentRotation += radians
-//        sphereEntity.transform.rotation = simd_quatf(angle: currentRotation, axis: [0, 1, 0])
-
-        // Rotate the pivot point (which will rotate the MovableSphere around its end)
-        rotateObject(named: "SpherePivot", byDegrees: currentRotation, axis: [0, 0, 1])
+        pivotMinuteHand?.transform.rotation = simd_quatf(angle: minuteRadians, axis: [0, 0, 1])
+        pivotHourHand?.transform.rotation = simd_quatf(angle: hourRadians, axis: [0, 0, 1])
     }
 }
