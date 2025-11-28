@@ -46,6 +46,10 @@ class ClockEntity: Entity {
 
         addChild(clockModel)
 
+        let handHeight: Float = 0.02
+        let handWidth: Float = 0.2
+        let hourHandZPosition: Float = 0.94
+
         // Create minute hand pivot
         pivotMinuteHand = Entity()
         pivotMinuteHand!.name = "PivotMinuteHand"
@@ -54,13 +58,13 @@ class ClockEntity: Entity {
 
         // Create minute hand
         let minuteHandHeight: Float = 0.9
-        let minuteHandMesh = MeshResource.generateBox(width: 0.2, height: minuteHandHeight, depth: 0.02)
+        let minuteHandMesh = MeshResource.generateBox(width: handWidth, height: minuteHandHeight, depth: handHeight)
         var minuteHandMaterial = SimpleMaterial()
         minuteHandMaterial.color = .init(tint: .black, texture: nil)
         minuteHandMaterial.metallic = .init(floatLiteral: 0.8)
 
         let minuteHand = ModelEntity(mesh: minuteHandMesh, materials: [minuteHandMaterial])
-        minuteHand.position = [0, minuteHandHeight / 2, 0.96]
+        minuteHand.position = [0, minuteHandHeight / 2, hourHandZPosition + handHeight]
         pivotMinuteHand!.addChild(minuteHand)
 
         // Create hour hand pivot
@@ -71,24 +75,24 @@ class ClockEntity: Entity {
 
         // Create hour hand
         let hourHandHeight: Float = 0.8
-        let hourHandMesh = MeshResource.generateBox(width: 0.2, height: hourHandHeight, depth: 0.02)
+        let hourHandMesh = MeshResource.generateBox(width: handWidth, height: hourHandHeight, depth: handHeight)
         var hourHandMaterial = SimpleMaterial()
         hourHandMaterial.color = .init(tint: .black, texture: nil)
         hourHandMaterial.metallic = .init(floatLiteral: 0.8)
 
         let hourHand = ModelEntity(mesh: hourHandMesh, materials: [hourHandMaterial])
-        hourHand.position = [0, hourHandHeight / 2, 0.94]
+        hourHand.position = [0, hourHandHeight / 2, hourHandZPosition]
         pivotHourHand!.addChild(hourHand)
 
         // Create center cylinder
-        let centerCylinderHeight: Float =  0.05
-        let centerCylinderMesh = MeshResource.generateCylinder(height: centerCylinderHeight, radius: 0.1)
+        let centerCylinderHeight: Float =  handHeight * 2 + 0.01
+        let centerCylinderMesh = MeshResource.generateCylinder(height: centerCylinderHeight, radius: handWidth / 2)
         var centerCylinderMaterial = SimpleMaterial()
         centerCylinderMaterial.color = .init(tint: .black, texture: nil)
         centerCylinderMaterial.metallic = .init(floatLiteral: 0.8)
 
         let centerCylinder = ModelEntity(mesh: centerCylinderMesh, materials: [centerCylinderMaterial])
-        centerCylinder.position = [0, 0, 0.94]
+        centerCylinder.position = [0, 0, hourHandZPosition]
         // Rotate the cylinder 90 degrees around the X axis
         centerCylinder.transform.rotation = simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
         clockModel.addChild(centerCylinder)
