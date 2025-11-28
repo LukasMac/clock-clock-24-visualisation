@@ -7,7 +7,7 @@ import AppKit
 import RealityKit
 
 class ClockGridView: NSView {
-    static let columns = 8
+    static let columns = 2
     static let rows = 3
 
     private var arView: ARView!
@@ -88,8 +88,8 @@ class ClockGridView: NSView {
 
     private func setupCamera() {
         // Calculate camera distance based on grid size
-        let gridWidth = Float(ClockGridView.columns) * clockSpacing
-        let gridHeight = Float(ClockGridView.rows) * clockSpacing
+        let gridWidth = Float(ClockGridView.columns) * clockSpacing * 2
+        let gridHeight = Float(ClockGridView.rows) * clockSpacing * 2
         let maxDimension = max(gridWidth, gridHeight)
 
         // Camera distance to fit the grid (using rough FOV estimate)

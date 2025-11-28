@@ -27,8 +27,31 @@ class PreviewViewController: NSViewController {
     
     override func viewDidAppear() {
         super.viewDidAppear()
-        
+
         isAnimating = true
+
+        // Make window accept key events
+        view.window?.makeFirstResponder(self)
+    }
+
+    override var acceptsFirstResponder: Bool {
+        return true
+    }
+
+    override func keyDown(with event: NSEvent) {
+        guard let characters = event.characters else {
+            super.keyDown(with: event)
+            return
+        }
+
+        switch characters {
+        case "-":
+            screensaverView?.test()
+        case "=":
+            screensaverView?.resetToNoon()
+        default:
+            super.keyDown(with: event)
+        }
     }
     
     override func viewWillDisappear() {

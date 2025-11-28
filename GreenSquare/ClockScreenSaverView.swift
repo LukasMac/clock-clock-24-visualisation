@@ -40,4 +40,14 @@ class ClockScreenSaverView: ScreenSaverView {
         orchestrator.tick()
         orchestrator.applyToGrid(clockGridView)
     }
+
+    /// Reset all clocks to 12 o'clock position
+    func resetToNoon() {
+        orchestrator.resetToNoon()
+        orchestrator.applyToGrid(clockGridView)
+    }
+    
+    func test() {
+        orchestrator.setEndPosition(number: 1, durationInFrames: 8 * 10)
+    }
 }
