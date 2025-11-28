@@ -14,9 +14,9 @@
             filePath = "GreenSquare/ClockOrchestrator.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
-            landmarkName = "setEndPosition(number:durationInFrames:)"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
+            landmarkName = "tick()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -30,9 +30,9 @@
             filePath = "GreenSquare/ClockOrchestrator.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
-            landmarkName = "setEndPosition(number:durationInFrames:)"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
+            landmarkName = "tick()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -46,9 +46,9 @@
             filePath = "GreenSquare/ClockOrchestrator.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
-            landmarkName = "tick()"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
+            landmarkName = "init(rows:columns:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

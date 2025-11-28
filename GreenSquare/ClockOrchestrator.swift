@@ -17,6 +17,78 @@ struct ClockHandPosition {
     static let half = ClockHandPosition(minuteHandDegrees: 180, hourHandDegrees: 180)
 }
 
+let digitsPositions: [[[[Float]]]] = [
+    [
+        // ZERO
+        [[90, 180],  [180, 270]],
+        [[0, 180],  [0, 180]],
+        [[0, 90],  [0, 270]],
+    ],
+
+    [
+        // ONE
+        [[225, 225],  [180, 180]],
+        [[225, 225],  [0, 180]],
+        [[225, 225],  [0, 0]],
+    ],
+
+    [
+        // TWO
+        [[90, 90],  [270, 180]],
+        [[180, 90],  [0, 270]],
+        [[0, 90],  [270, 270]],
+    ],
+
+    [
+        // THREE
+        [[90, 90],  [270, 180]],
+        [[90, 90],  [0, 270]],
+        [[90, 90],  [0, 270]],
+    ],
+
+    [
+        // FOUR
+        [[180, 180],  [180, 180]],
+        [[0, 90],  [0, 180]],
+        [[225, 225],  [0, 0]],
+    ],
+
+    [
+        // FIVE
+        [[90, 180],  [270, 270]],
+        [[0, 90],  [270, 180]],
+        [[90, 90],  [0, 270]],
+    ],
+
+    [
+        // SIX
+        [[90, 180],  [270, 270]],
+        [[0, 180],  [270, 180]],
+        [[0, 90],  [0, 270]],
+    ],
+
+    [
+        // SEVEN
+        [[90, 90],  [270, 180]],
+        [[225, 225],  [0, 180]],
+        [[225, 225],  [0, 0]],
+    ],
+
+    [
+        // EIGHT
+        [[90, 180],  [270, 180]],
+        [[0, 90],  [270, 0]],
+        [[0, 90],  [0, 270]],
+    ],
+
+    [
+        // NINE
+        [[90, 180],  [270, 180]],
+        [[0, 90],  [0, 180]],
+        [[90, 90],  [0, 270]],
+    ]
+]
+
 /// Orchestrates the hand positions for a grid of clocks
 class ClockOrchestrator {
     var paused: Bool = true
@@ -114,16 +186,13 @@ class ClockOrchestrator {
     }
     
     func setEndPosition(number: Int, durationInFrames: Int) {
-        let digitOnePositions = [
-            [[225, 225],  [180, 180]],
-            [[225, 225],  [0, 180]],
-            [[225, 225],  [0, 0]],
-        ]
+        print("setEndPosition", number, durationInFrames)
         
         for row in 0..<rows {
             for col in 0..<columns {
-                let hourHandDistanceInDeg = Float(digitOnePositions[row][col][0]) - positions[row][col].hourHandDegrees;
-                let minuteHandDistanceInDeg = Float(digitOnePositions[row][col][1]) - positions[row][col].minuteHandDegrees;
+                let digitPositions = digitsPositions[number]
+                let hourHandDistanceInDeg = digitPositions[row][col][0] - positions[row][col].hourHandDegrees;
+                let minuteHandDistanceInDeg = digitPositions[row][col][1] - positions[row][col].minuteHandDegrees;
 
                 positions[row][col].hourHandStep = hourHandDistanceInDeg / Float(durationInFrames)
                 positions[row][col].minuteHandStep = minuteHandDistanceInDeg / Float(durationInFrames)

@@ -45,10 +45,12 @@ class PreviewViewController: NSViewController {
         }
 
         switch characters {
-        case "-":
-            screensaverView?.test()
         case "=":
             screensaverView?.resetToNoon()
+        case let digit where digit >= "0" && digit <= "9":
+            if let intValue = Int(characters) {
+                screensaverView?.test(digit: intValue)
+            }
         default:
             super.keyDown(with: event)
         }

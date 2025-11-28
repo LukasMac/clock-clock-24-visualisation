@@ -47,7 +47,7 @@ class ClockScreenSaverView: ScreenSaverView {
         orchestrator.applyToGrid(clockGridView)
     }
     
-    func test() {
-        orchestrator.setEndPosition(number: 1, durationInFrames: 8 * 10)
+    func test(digit: Int) {
+        orchestrator.setEndPosition(number: digit, durationInFrames: 4 * 10)
     }
 }
