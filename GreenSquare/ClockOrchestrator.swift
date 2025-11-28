@@ -27,7 +27,7 @@ let digitsPositions: [[[[Float]]]] = [
 
     [
         // ONE
-        [[225, 225],  [180, 180]],
+        [[225, 225],  [270, 180]],
         [[225, 225],  [0, 180]],
         [[225, 225],  [0, 0]],
     ],
@@ -190,7 +190,11 @@ class ClockOrchestrator {
         
         for row in 0..<rows {
             for col in 0..<columns {
-                let digitPositions = digitsPositions[number]
+                // Each pair of columns represents a digit; 
+                // extract the correct digit for this column pair
+                let digitIndex = col / 2
+                let digit = (number / Int(pow(10.0, Double(3 - digitIndex)))) % 10
+                let digitPositions = digitsPositions[digit]
                 let column = col % 2
 
                 let hourHandDistanceInDeg = digitPositions[row][column][0] - positions[row][col].hourHandDegrees;

@@ -138,7 +138,7 @@ class ClockGridView: NSView {
     }
 
     private func loadModelTemplate() -> ModelEntity? {
-        guard let url = Bundle.main.url(forResource: "box_with_cutout_3", withExtension: "usdz") else {
+        guard let url = Bundle.main.url(forResource: "box_with_cutout_5", withExtension: "usdz") else {
             print("USDZ file not found in bundle")
             return nil
         }
