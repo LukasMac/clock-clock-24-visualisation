@@ -64,18 +64,42 @@ class ClockGridView: NSView {
             clocks.append(rowClocks)
         }
 
-        // Add single directional light for uniform lighting
-        let directionalLight = DirectionalLight()
-        directionalLight.light.intensity = 1500
-        directionalLight.light.color = .white
-        directionalLight.look(at: [0, 0, 0], from: [2, 3, 10], relativeTo: nil)
-        anchor.addChild(directionalLight)
+        // Add ground plane for shadows to fall on
+        let groundSize: Float = 20.0
+        let groundMesh = MeshResource.generatePlane(width: groundSize, depth: groundSize)
+        var groundMaterial = SimpleMaterial()
+        groundMaterial.color = .init(tint: .init(white: 0.95, alpha: 1.0), texture: nil)
+        groundMaterial.roughness = .init(floatLiteral: 0.8)
+        groundMaterial.metallic = .init(floatLiteral: 0.0)
+        let groundPlane = ModelEntity(mesh: groundMesh, materials: [groundMaterial])
+        groundPlane.position = [0, -gridHeight / 2 - 1.5, -2]
+        groundPlane.transform.rotation = simd_quatf(angle: -.pi / 6, axis: [1, 0, 0])
+        anchor.addChild(groundPlane)
+
+        // Main directional light (key light) - simulates sunlight from upper right
+        let keyLight = DirectionalLight()
+        keyLight.light.intensity = 1200
+        keyLight.light.color = .init(white: 1.0, alpha: 1.0)
+        keyLight.look(at: [0, 0, 0], from: [3, 4, 8], relativeTo: nil)
+        // Enable shadow casting
+        keyLight.shadow = DirectionalLightComponent.Shadow(
+            maximumDistance: 15,
+            depthBias: 0.03
+        )
+        anchor.addChild(keyLight)
+
+        // Fill light - softer light from opposite side to reduce harsh shadows
+        let fillLight = DirectionalLight()
+        fillLight.light.intensity = 400
+        fillLight.light.color = .init(red: 0.9, green: 0.95, blue: 1.0, alpha: 1.0)
+        fillLight.look(at: [0, 0, 0], from: [-4, 2, 6], relativeTo: nil)
+        anchor.addChild(fillLight)
 
         // Position camera to view entire grid
         setupCamera()
 
-        // Set environment lighting
-        arView.environment.lighting.intensityExponent = 1.0
+        // Set environment lighting for ambient illumination
+        arView.environment.lighting.intensityExponent = 0.8
     }
 
     private func loadModelTemplate() -> ModelEntity? {
