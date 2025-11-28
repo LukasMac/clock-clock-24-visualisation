@@ -7,7 +7,7 @@ import AppKit
 import RealityKit
 
 class ClockGridView: NSView {
-    static let columns = 2
+    static let columns = 8
     static let rows = 3
 
     private var arView: ARView!
@@ -30,7 +30,7 @@ class ClockGridView: NSView {
         // Create single ARView for entire grid
         arView = ARView(frame: bounds)
         arView.autoresizingMask = [.width, .height]
-        arView.environment.background = .color(.white)
+        arView.environment.background = .color(.init(red: 0.85, green: 0.84, blue: 0.82, alpha: 1.0))
         addSubview(arView)
 
         // Create anchor
@@ -64,17 +64,52 @@ class ClockGridView: NSView {
             clocks.append(rowClocks)
         }
 
-        // Add ground plane for shadows to fall on
-        let groundSize: Float = 20.0
-        let groundMesh = MeshResource.generatePlane(width: groundSize, depth: groundSize)
-        var groundMaterial = SimpleMaterial()
-        groundMaterial.color = .init(tint: .init(white: 0.95, alpha: 1.0), texture: nil)
-        groundMaterial.roughness = .init(floatLiteral: 0.8)
-        groundMaterial.metallic = .init(floatLiteral: 0.0)
-        let groundPlane = ModelEntity(mesh: groundMesh, materials: [groundMaterial])
-        groundPlane.position = [0, -gridHeight / 2 - 1.5, -2]
-        groundPlane.transform.rotation = simd_quatf(angle: -.pi / 6, axis: [1, 0, 0])
-        anchor.addChild(groundPlane)
+        // Add wall behind the clocks for them to "hang" on
+        // Make it large enough that edges are never visible
+        let wallSize: Float = 100.0
+        let wallMesh = MeshResource.generatePlane(width: wallSize, height: wallSize)
+        var wallMaterial = SimpleMaterial()
+        wallMaterial.color = .init(tint: .init(red: 0.94, green: 0.93, blue: 0.91, alpha: 1.0), texture: nil)
+        wallMaterial.roughness = .init(floatLiteral: 0.9)
+        wallMaterial.metallic = .init(floatLiteral: 0.0)
+        let wall = ModelEntity(mesh: wallMesh, materials: [wallMaterial])
+        // Position wall behind the clocks (negative z) and rotate to face camera
+        wall.position = [0, 0, -0.5]
+        wall.transform.rotation = simd_quatf(angle: 0, axis: [0, 1, 0])
+        anchor.addChild(wall)
+
+        // Add frame boxes around the clock grid to create margins
+        let frameThickness: Float = 0.3
+        let frameDepth: Float = 0.5
+        let frameMargin: Float = 1.2  // Distance from edge clocks to frame
+        let frameLength: Float = 50.0  // Long enough to extend beyond view
+
+        var frameMaterial = SimpleMaterial()
+        frameMaterial.color = .init(tint: .init(red: 0.25, green: 0.22, blue: 0.2, alpha: 1.0), texture: nil)
+        frameMaterial.roughness = .init(floatLiteral: 0.7)
+        frameMaterial.metallic = .init(floatLiteral: 0.1)
+
+        // // Top frame
+        // let topFrameMesh = MeshResource.generateBox(width: frameLength, height: frameThickness, depth: frameDepth)
+        // let topFrame = ModelEntity(mesh: topFrameMesh, materials: [frameMaterial])
+        // topFrame.position = [0, gridHeight / 2 + frameMargin, 0]
+        // anchor.addChild(topFrame)
+
+        // // Bottom frame
+        // let bottomFrame = ModelEntity(mesh: topFrameMesh, materials: [frameMaterial])
+        // bottomFrame.position = [0, -gridHeight / 2 - frameMargin, 0]
+        // anchor.addChild(bottomFrame)
+
+        // // Left frame
+        // let sideFrameMesh = MeshResource.generateBox(width: frameThickness, height: frameLength, depth: frameDepth)
+        // let leftFrame = ModelEntity(mesh: sideFrameMesh, materials: [frameMaterial])
+        // leftFrame.position = [-gridWidth / 2 - frameMargin, 0, 0]
+        // anchor.addChild(leftFrame)
+
+        // // Right frame
+        // let rightFrame = ModelEntity(mesh: sideFrameMesh, materials: [frameMaterial])
+        // rightFrame.position = [gridWidth / 2 + frameMargin, 0, 0]
+        // anchor.addChild(rightFrame)
 
         // Main directional light (key light) - simulates sunlight from upper right
         let keyLight = DirectionalLight()
@@ -112,8 +147,8 @@ class ClockGridView: NSView {
 
     private func setupCamera() {
         // Calculate camera distance based on grid size
-        let gridWidth = Float(ClockGridView.columns) * clockSpacing * 2
-        let gridHeight = Float(ClockGridView.rows) * clockSpacing * 2
+        let gridWidth = Float(ClockGridView.columns) * clockSpacing
+        let gridHeight = Float(ClockGridView.rows) * clockSpacing
         let maxDimension = max(gridWidth, gridHeight)
 
         // Camera distance to fit the grid (using rough FOV estimate)

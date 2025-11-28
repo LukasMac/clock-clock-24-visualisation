@@ -191,8 +191,10 @@ class ClockOrchestrator {
         for row in 0..<rows {
             for col in 0..<columns {
                 let digitPositions = digitsPositions[number]
-                let hourHandDistanceInDeg = digitPositions[row][col][0] - positions[row][col].hourHandDegrees;
-                let minuteHandDistanceInDeg = digitPositions[row][col][1] - positions[row][col].minuteHandDegrees;
+                let column = col % 2
+
+                let hourHandDistanceInDeg = digitPositions[row][column][0] - positions[row][col].hourHandDegrees;
+                let minuteHandDistanceInDeg = digitPositions[row][column][1] - positions[row][col].minuteHandDegrees;
 
                 positions[row][col].hourHandStep = hourHandDistanceInDeg / Float(durationInFrames)
                 positions[row][col].minuteHandStep = minuteHandDistanceInDeg / Float(durationInFrames)

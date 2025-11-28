@@ -48,6 +48,6 @@ class ClockScreenSaverView: ScreenSaverView {
     }
     
     func test(digit: Int) {
-        orchestrator.setEndPosition(number: digit, durationInFrames: 4 * 10)
+        orchestrator.setEndPosition(number: digit, durationInFrames: 9 * 10)
     }
 }
