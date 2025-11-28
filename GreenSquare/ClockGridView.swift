@@ -8,6 +8,7 @@ import AppKit
 class ClockGridView: NSView {
     static let columns = 9
     static let rows = 3
+    static let margin: CGFloat = 40
 
     private(set) var clocks: [[ClockView]] = []
 
@@ -38,14 +39,26 @@ class ClockGridView: NSView {
     }
 
     private func layoutClocks() {
-        let cellWidth = bounds.width / CGFloat(ClockGridView.columns)
-        let cellHeight = bounds.height / CGFloat(ClockGridView.rows)
+        let margin = ClockGridView.margin
+        let availableWidth = bounds.width - (margin * 2)
+        let availableHeight = bounds.height - (margin * 2)
+
+        // Calculate cell size as perfect square
+        let maxCellWidth = availableWidth / CGFloat(ClockGridView.columns)
+        let maxCellHeight = availableHeight / CGFloat(ClockGridView.rows)
+        let cellSize = min(maxCellWidth, maxCellHeight)
+
+        // Calculate total grid size and offset to center it
+        let gridWidth = cellSize * CGFloat(ClockGridView.columns)
+        let gridHeight = cellSize * CGFloat(ClockGridView.rows)
+        let offsetX = margin + (availableWidth - gridWidth) / 2
+        let offsetY = margin + (availableHeight - gridHeight) / 2
 
         for row in 0..<ClockGridView.rows {
             for col in 0..<ClockGridView.columns {
-                let x = CGFloat(col) * cellWidth
-                let y = bounds.height - CGFloat(row + 1) * cellHeight // Top-to-bottom
-                clocks[row][col].frame = CGRect(x: x, y: y, width: cellWidth, height: cellHeight)
+                let x = offsetX + CGFloat(col) * cellSize
+                let y = offsetY + (gridHeight - CGFloat(row + 1) * cellSize) // Top-to-bottom
+                clocks[row][col].frame = CGRect(x: x, y: y, width: cellSize, height: cellSize)
             }
         }
     }

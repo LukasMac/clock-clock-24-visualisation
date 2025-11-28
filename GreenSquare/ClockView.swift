@@ -105,12 +105,16 @@ class ClockView: NSView {
             anchor.addChild(sphereEntity)
         }
 
-        // Add fill light
-        let fillLight = PointLight()
-        fillLight.light.intensity = 2000
-        fillLight.light.color = .white
-        fillLight.position = [-0.2, -0.1, 0.2]
-        anchor.addChild(fillLight)
+        // Use directional light for uniform lighting across all clocks
+        let directionalLight = DirectionalLight()
+        directionalLight.light.intensity = 1500
+        directionalLight.light.color = .white
+        // Light coming from front-top-left, same angle for all clocks
+        directionalLight.look(at: [0, 0, 0], from: [0.3, 0.5, 1], relativeTo: nil)
+        anchor.addChild(directionalLight)
+
+        // Add subtle ambient light via environment
+        arView.environment.lighting.intensityExponent = 1.0
     }
 
     private func loadModelFromUSDZ(named name: String) throws -> ModelEntity? {
