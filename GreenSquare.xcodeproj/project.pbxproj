@@ -13,16 +13,16 @@
 		987AF82F2ECCC6080048C664 /* ClockGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AF82C2ECCC6080048C664 /* ClockGridView.swift */; };
 		987AF8302ECCC6080048C664 /* ClockOrchestrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */; };
 		987AF8312ECCC6080048C664 /* ClockOrchestrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */; };
-		EFA812C8243FA7BF00482522 /* GreenSquareScreenSaverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812C7243FA7BF00482522 /* GreenSquareScreenSaverView.swift */; };
+		EFA812C8243FA7BF00482522 /* ClockScreenSaverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812C7243FA7BF00482522 /* ClockScreenSaverView.swift */; };
 		EFA812D0243FA8E500482522 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812CF243FA8E500482522 /* AppDelegate.swift */; };
 		EFA812D2243FA8E500482522 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812D1243FA8E500482522 /* ContentView.swift */; };
 		EFA812D4243FA8E700482522 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFA812D3243FA8E700482522 /* Assets.xcassets */; };
 		EFA812D7243FA8E700482522 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFA812D6243FA8E700482522 /* Preview Assets.xcassets */; };
 		EFA812DA243FA8E700482522 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFA812D8243FA8E700482522 /* Main.storyboard */; };
-		EFA812FC243FA90D00482522 /* GreenSquareScreenSaverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812C7243FA7BF00482522 /* GreenSquareScreenSaverView.swift */; };
+		EFA812FC243FA90D00482522 /* ClockScreenSaverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812C7243FA7BF00482522 /* ClockScreenSaverView.swift */; };
 		EFA812FE243FA93800482522 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812FD243FA93800482522 /* PreviewViewController.swift */; };
-		EFA81300243FAA0D00482522 /* GreenSquareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812FF243FAA0D00482522 /* GreenSquareView.swift */; };
-		EFA81301243FAA0D00482522 /* GreenSquareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812FF243FAA0D00482522 /* GreenSquareView.swift */; };
+		EFA81300243FAA0D00482522 /* ClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812FF243FAA0D00482522 /* ClockView.swift */; };
+		EFA81301243FAA0D00482522 /* ClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812FF243FAA0D00482522 /* ClockView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,7 +49,7 @@
 		EFA812B9243FA79800482522 /* GreenSquare.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GreenSquare.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFA812C0243FA79800482522 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EFA812C6243FA7BF00482522 /* GreenSquare-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GreenSquare-Bridging-Header.h"; sourceTree = "<group>"; };
-		EFA812C7243FA7BF00482522 /* GreenSquareScreenSaverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenSquareScreenSaverView.swift; sourceTree = "<group>"; };
+		EFA812C7243FA7BF00482522 /* ClockScreenSaverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockScreenSaverView.swift; sourceTree = "<group>"; };
 		EFA812CD243FA8E500482522 /* Preview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Preview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFA812CF243FA8E500482522 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EFA812D1243FA8E500482522 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -61,7 +61,7 @@
 		EFA812E1243FA8E800482522 /* PreviewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PreviewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFA812EC243FA8E800482522 /* PreviewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PreviewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFA812FD243FA93800482522 /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
-		EFA812FF243FAA0D00482522 /* GreenSquareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenSquareView.swift; sourceTree = "<group>"; };
+		EFA812FF243FAA0D00482522 /* ClockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,8 +119,8 @@
 		EFA812BB243FA79800482522 /* GreenSquare */ = {
 			isa = PBXGroup;
 			children = (
-				EFA812C7243FA7BF00482522 /* GreenSquareScreenSaverView.swift */,
-				EFA812FF243FAA0D00482522 /* GreenSquareView.swift */,
+				EFA812C7243FA7BF00482522 /* ClockScreenSaverView.swift */,
+				EFA812FF243FAA0D00482522 /* ClockView.swift */,
 				987AF82C2ECCC6080048C664 /* ClockGridView.swift */,
 				987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */,
 				EFA812C0243FA79800482522 /* Info.plist */,
@@ -326,8 +326,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EFA812C8243FA7BF00482522 /* GreenSquareScreenSaverView.swift in Sources */,
-				EFA81300243FAA0D00482522 /* GreenSquareView.swift in Sources */,
+				EFA812C8243FA7BF00482522 /* ClockScreenSaverView.swift in Sources */,
+				EFA81300243FAA0D00482522 /* ClockView.swift in Sources */,
 				987AF82E2ECCC6080048C664 /* ClockGridView.swift in Sources */,
 				987AF8302ECCC6080048C664 /* ClockOrchestrator.swift in Sources */,
 			);
@@ -339,8 +339,8 @@
 			files = (
 				EFA812D2243FA8E500482522 /* ContentView.swift in Sources */,
 				EFA812D0243FA8E500482522 /* AppDelegate.swift in Sources */,
-				EFA812FC243FA90D00482522 /* GreenSquareScreenSaverView.swift in Sources */,
-				EFA81301243FAA0D00482522 /* GreenSquareView.swift in Sources */,
+				EFA812FC243FA90D00482522 /* ClockScreenSaverView.swift in Sources */,
+				EFA81301243FAA0D00482522 /* ClockView.swift in Sources */,
 				987AF82F2ECCC6080048C664 /* ClockGridView.swift in Sources */,
 				987AF8312ECCC6080048C664 /* ClockOrchestrator.swift in Sources */,
 				EFA812FE243FA93800482522 /* PreviewViewController.swift in Sources */,

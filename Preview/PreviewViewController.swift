@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 
 class PreviewViewController: NSViewController {
-    var screensaverView: GreenSquareScreenSaverView? = nil
+    var screensaverView: ClockScreenSaverView? = nil
     
     var timer: Timer? = nil
     
@@ -21,7 +21,7 @@ class PreviewViewController: NSViewController {
     }
     
     override func loadView() {
-        screensaverView = GreenSquareScreenSaverView(frame: CGRect.zero, isPreview: true)
+        screensaverView = ClockScreenSaverView(frame: CGRect.zero, isPreview: true)
         self.view = screensaverView ?? NSView()
     }
     

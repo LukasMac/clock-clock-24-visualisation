@@ -9,7 +9,7 @@ class ClockGridView: NSView {
     static let columns = 9
     static let rows = 3
 
-    private(set) var clocks: [[GreenSquareView]] = []
+    private(set) var clocks: [[ClockView]] = []
 
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -22,9 +22,9 @@ class ClockGridView: NSView {
 
     private func setupGrid() {
         for row in 0..<ClockGridView.rows {
-            var rowClocks: [GreenSquareView] = []
+            var rowClocks: [ClockView] = []
             for col in 0..<ClockGridView.columns {
-                let clock = GreenSquareView()
+                let clock = ClockView()
                 addSubview(clock)
                 rowClocks.append(clock)
             }
@@ -51,7 +51,7 @@ class ClockGridView: NSView {
     }
 
     /// Get a clock at a specific grid position
-    func clock(at row: Int, col: Int) -> GreenSquareView? {
+    func clock(at row: Int, col: Int) -> ClockView? {
         guard row >= 0 && row < ClockGridView.rows && col >= 0 && col < ClockGridView.columns else {
             return nil
         }

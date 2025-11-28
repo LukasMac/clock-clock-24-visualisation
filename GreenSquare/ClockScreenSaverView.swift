@@ -1,5 +1,5 @@
 //
-//  GreenSquareScreenSaverView.swift
+//  ClockScreenSaverView.swift
 //  GreenSquare
 //
 //  Created by Robert Tolar Haining on 4/9/20.
@@ -9,7 +9,7 @@
 import Foundation
 import ScreenSaver
 
-class GreenSquareScreenSaverView: ScreenSaverView {
+class ClockScreenSaverView: ScreenSaverView {
     let clockGridView = ClockGridView(frame: .zero)
     let orchestrator = ClockOrchestrator(rows: ClockGridView.rows, columns: ClockGridView.columns)
 

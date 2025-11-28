@@ -1,5 +1,5 @@
 //
-//  GreenSquareView.swift
+//  ClockView.swift
 //  GreenSquare
 //
 //  Created by Robert Tolar Haining on 4/9/20.
@@ -10,7 +10,7 @@ import AppKit
 import RealityKit
 import ModelIO
 
-class GreenSquareView: NSView {
+class ClockView: NSView {
     private var arView: ARView!
     private var sphereEntity: ModelEntity!
     private var pivotMinuteHand: Entity?
