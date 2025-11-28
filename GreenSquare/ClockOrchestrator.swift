@@ -60,7 +60,7 @@ class ClockOrchestrator {
         for row in 0..<rows {
             for col in 0..<columns {
                 let phase = Float(row * columns + col)
-                let speed: Float = 1.0
+                let speed: Float = 0
                 let minuteAngle = Float(frameCount) * speed + phase * 15
                 let hourAngle = Float(frameCount) * (speed / 2) + phase * 10
 

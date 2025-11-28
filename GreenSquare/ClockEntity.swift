@@ -1,0 +1,92 @@
+//
+//  ClockEntity.swift
+//  GreenSquare
+//
+
+import RealityKit
+
+/// Represents a single clock (cylinder + two hands) as an Entity in a shared scene
+class ClockEntity: Entity {
+    private var clockModel: ModelEntity?
+    private var pivotMinuteHand: Entity?
+    private var pivotHourHand: Entity?
+
+    required init() {
+        super.init()
+    }
+
+    init(modelTemplate: ModelEntity?) {
+        super.init()
+        setupClock(modelTemplate: modelTemplate)
+    }
+
+    private func setupClock(modelTemplate: ModelEntity?) {
+        // Clone the model template or create fallback
+        if let template = modelTemplate {
+            clockModel = template.clone(recursive: true)
+        } else {
+            // Fallback: create a simple box
+            let boxMesh = MeshResource.generateBox(size: [0.3, 0.2, 0.1])
+            var material = SimpleMaterial()
+            material.color = .init(tint: .white, texture: nil)
+            clockModel = ModelEntity(mesh: boxMesh, materials: [material])
+        }
+
+        guard let clockModel = clockModel else { return }
+
+        // Apply material
+        var material = SimpleMaterial()
+        material.color = .init(tint: .white, texture: nil)
+        material.roughness = .init(floatLiteral: 0.3)
+        material.metallic = .init(floatLiteral: 0.5)
+        clockModel.model?.materials = [material]
+
+        // Base rotation for the model
+        clockModel.transform.rotation = simd_quatf(angle: 1.572 * 4, axis: [0, 1, 0])
+
+        addChild(clockModel)
+
+        // Create minute hand pivot
+        pivotMinuteHand = Entity()
+        pivotMinuteHand!.name = "PivotMinuteHand"
+        pivotMinuteHand!.position = [0, 0, 0.5]
+        clockModel.addChild(pivotMinuteHand!)
+
+        // Create minute hand
+        let minuteHandHeight: Float = 0.8
+        let minuteHandMesh = MeshResource.generateBox(width: 0.2, height: minuteHandHeight, depth: 0.02)
+        var minuteHandMaterial = SimpleMaterial()
+        minuteHandMaterial.color = .init(tint: .black, texture: nil)
+        minuteHandMaterial.metallic = .init(floatLiteral: 0.8)
+
+        let minuteHand = ModelEntity(mesh: minuteHandMesh, materials: [minuteHandMaterial])
+        minuteHand.position = [0, minuteHandHeight / 2, 0]
+        pivotMinuteHand!.addChild(minuteHand)
+
+        // Create hour hand pivot
+        pivotHourHand = Entity()
+        pivotHourHand!.name = "PivotHourHand"
+        pivotHourHand!.position = [0, 0, 0.5]
+        clockModel.addChild(pivotHourHand!)
+
+        // Create hour hand
+        let hourHandHeight: Float = 0.7
+        let hourHandMesh = MeshResource.generateBox(width: 0.2, height: hourHandHeight, depth: 0.02)
+        var hourHandMaterial = SimpleMaterial()
+        hourHandMaterial.color = .init(tint: .black, texture: nil)
+        hourHandMaterial.metallic = .init(floatLiteral: 0.8)
+
+        let hourHand = ModelEntity(mesh: hourHandMesh, materials: [hourHandMaterial])
+        hourHand.position = [0, hourHandHeight / 2, 0]
+        pivotHourHand!.addChild(hourHand)
+    }
+
+    /// Sets the clock hands to absolute angles (in degrees, 0 = 12 o'clock, clockwise)
+    func setClockHands(minuteHandDeg: Float, hourHandDeg: Float) {
+        let minuteRadians = -minuteHandDeg * .pi / 180.0
+        let hourRadians = -hourHandDeg * .pi / 180.0
+
+        pivotMinuteHand?.transform.rotation = simd_quatf(angle: minuteRadians, axis: [0, 0, 1])
+        pivotHourHand?.transform.rotation = simd_quatf(angle: hourRadians, axis: [0, 0, 1])
+    }
+}
