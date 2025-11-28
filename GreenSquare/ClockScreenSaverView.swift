@@ -57,7 +57,7 @@ class ClockScreenSaverView: ScreenSaverView {
                 let mm = String(format: "%02d", minute)
                 let hhmmString = hh + mm
                 if let hhmm = Int(hhmmString) {
-                    orchestrator.setEndPosition(number: hhmm, durationInFrames: 9 * 10)
+                    orchestrator.setEndPosition(number: hhmm, durationInFrames: 20 * 10)
                 }
             }
         }

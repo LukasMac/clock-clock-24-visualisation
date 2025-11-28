@@ -79,37 +79,36 @@ class ClockGridView: NSView {
         anchor.addChild(wall)
 
         // Add frame boxes around the clock grid to create margins
-        let frameThickness: Float = 0.3
+        let frameThickness: Float = 1
         let frameDepth: Float = 0.5
-        let frameMargin: Float = 1.2  // Distance from edge clocks to frame
-        let frameLength: Float = 50.0  // Long enough to extend beyond view
+        let frameMargin: Float = 1.5  // Distance from edge clocks to frame
 
         var frameMaterial = SimpleMaterial()
-        frameMaterial.color = .init(tint: .init(red: 0.25, green: 0.22, blue: 0.2, alpha: 1.0), texture: nil)
-        frameMaterial.roughness = .init(floatLiteral: 0.7)
-        frameMaterial.metallic = .init(floatLiteral: 0.1)
+        frameMaterial.color = .init(tint: .white, texture: nil)
+        frameMaterial.roughness = .init(floatLiteral: 0.3)
+        frameMaterial.metallic = .init(floatLiteral: 0.5)
+        
+        // Top frame
+        let topFrameMesh = MeshResource.generateBox(width: Float(ClockGridView.columns * 2), height: frameThickness, depth: frameDepth)
+        let topFrame = ModelEntity(mesh: topFrameMesh, materials: [frameMaterial])
+        topFrame.position = [0, gridHeight / 2 + frameMargin, 0.75]
+        anchor.addChild(topFrame)
 
-        // // Top frame
-        // let topFrameMesh = MeshResource.generateBox(width: frameLength, height: frameThickness, depth: frameDepth)
-        // let topFrame = ModelEntity(mesh: topFrameMesh, materials: [frameMaterial])
-        // topFrame.position = [0, gridHeight / 2 + frameMargin, 0]
-        // anchor.addChild(topFrame)
+         // Bottom frame
+         let bottomFrame = ModelEntity(mesh: topFrameMesh, materials: [frameMaterial])
+         bottomFrame.position = [0, -gridHeight / 2 - frameMargin, 0.75]
+         anchor.addChild(bottomFrame)
 
-        // // Bottom frame
-        // let bottomFrame = ModelEntity(mesh: topFrameMesh, materials: [frameMaterial])
-        // bottomFrame.position = [0, -gridHeight / 2 - frameMargin, 0]
-        // anchor.addChild(bottomFrame)
+         // Left frame
+         let sideFrameMesh = MeshResource.generateBox(width: frameThickness, height: Float(ClockGridView.rows * 2) + (frameThickness * 2), depth: frameDepth)
+         let leftFrame = ModelEntity(mesh: sideFrameMesh, materials: [frameMaterial])
+         leftFrame.position = [-gridWidth / 2 - frameMargin, 0, 0.75]
+         anchor.addChild(leftFrame)
 
-        // // Left frame
-        // let sideFrameMesh = MeshResource.generateBox(width: frameThickness, height: frameLength, depth: frameDepth)
-        // let leftFrame = ModelEntity(mesh: sideFrameMesh, materials: [frameMaterial])
-        // leftFrame.position = [-gridWidth / 2 - frameMargin, 0, 0]
-        // anchor.addChild(leftFrame)
-
-        // // Right frame
-        // let rightFrame = ModelEntity(mesh: sideFrameMesh, materials: [frameMaterial])
-        // rightFrame.position = [gridWidth / 2 + frameMargin, 0, 0]
-        // anchor.addChild(rightFrame)
+         // Right frame
+         let rightFrame = ModelEntity(mesh: sideFrameMesh, materials: [frameMaterial])
+         rightFrame.position = [gridWidth / 2 + frameMargin, 0, 0.75]
+         anchor.addChild(rightFrame)
 
         // Main directional light (key light) - simulates sunlight from upper right
         let keyLight = DirectionalLight()
