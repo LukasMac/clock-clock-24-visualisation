@@ -42,7 +42,7 @@ class ClockEntity: Entity {
         clockModel.model?.materials = [material]
 
         // Base rotation for the model
-        clockModel.transform.rotation = simd_quatf(angle: 1.572 * 4, axis: [0, 1, 0])
+        clockModel.transform.rotation = simd_quatf(angle: 1.5708 * 4, axis: [0, 1, 0])
 
         addChild(clockModel)
 

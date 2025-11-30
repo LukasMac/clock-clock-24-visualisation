@@ -10,7 +10,7 @@ import Foundation
 import ScreenSaver
 
 class ClockScreenSaverView: ScreenSaverView {
-    let clockGridView = ClockGridView(frame: .zero)
+    let clockGridView: ClockGridView
     let orchestrator = ClockOrchestrator(rows: ClockGridView.rows, columns: ClockGridView.columns)
 
     private var lastMinute: Int = -1
@@ -19,6 +19,8 @@ class ClockScreenSaverView: ScreenSaverView {
     private let checkIntervalFrames: Int = 120 // Check every 2 seconds at 60 FPS
 
     override init?(frame: CGRect, isPreview: Bool) {
+        // Show controls only in Preview app (isPreview is true when running in Preview)
+        clockGridView = ClockGridView(frame: .zero, showControls: isPreview)
         super.init(frame: frame, isPreview: isPreview)
         self.animationTimeInterval = 1 / Double(framesPerSecond)
         addSubview(clockGridView)
