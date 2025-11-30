@@ -16,6 +16,8 @@ class ClockGridView: NSView {
 
     // Store references for real-time updates
     private var keyLight: DirectionalLight!
+    private var keySpotLight: SpotLight!
+    private var useSpotLight: Bool = false  // Toggle for ray-traced shadows
     private var fillLight: DirectionalLight!
     private var rimLight: DirectionalLight!
     private var wall: ModelEntity!
@@ -133,11 +135,27 @@ class ClockGridView: NSView {
         // Position: bottom-right, angled to create gradient on wall toward top-left
         keyLight.look(at: [-5, 3, 0], from: [12, -6, 8], relativeTo: nil)
         // Enable soft shadow casting
+        // depthBias: Higher values reduce shadow acne (vertical line artifacts)
+        // maximumDistance: Smaller values improve shadow quality/resolution
         keyLight.shadow = DirectionalLightComponent.Shadow(
-            maximumDistance: 20,
-            depthBias: 0.1
+            maximumDistance: 12,
+            depthBias: 1.5
         )
         anchor.addChild(keyLight)
+
+        // Alternative: SpotLight for ray-traced shadows (smoother quality)
+        // SpotLights in RealityKit 4.0 produce ray-traced shadows
+        keySpotLight = SpotLight()
+        keySpotLight.light.intensity = 50000  // SpotLights need higher intensity
+        keySpotLight.light.color = .init(red: 1.0, green: 0.98, blue: 0.95, alpha: 1.0)
+        keySpotLight.light.innerAngleInDegrees = 60
+        keySpotLight.light.outerAngleInDegrees = 80
+        keySpotLight.light.attenuationRadius = 50
+        keySpotLight.position = [12, -6, 15]
+        keySpotLight.look(at: [0, 0, 0], from: keySpotLight.position, relativeTo: nil)
+        keySpotLight.shadow = SpotLightComponent.Shadow()
+        keySpotLight.isEnabled = false  // Disabled by default, toggle with checkbox
+        anchor.addChild(keySpotLight)
 
         // 2. Soft Fill Light - Frontal, provides general illumination
         // Lower intensity to maintain the gradient effect
@@ -214,14 +232,28 @@ class ClockGridView: NSView {
 
         // Key Light Section (bottom-right, creates gradient)
         yOffset = addSectionHeader("Key Light (gradient source)", at: yOffset)
-        yOffset = addSlider("Intensity", min: 0, max: 2000, value: 1200, tag: 1, at: yOffset)
-        yOffset = addSlider("Pos X", min: -15, max: 20, value: 12, tag: 2, at: yOffset)
-        yOffset = addSlider("Pos Y", min: -15, max: 15, value: -6, tag: 3, at: yOffset)
-        yOffset = addSlider("Pos Z", min: 1, max: 20, value: 8, tag: 4, at: yOffset)
+        yOffset = addSlider("Intensity", min: 0, max: 200000, value: 1200, tag: 1, at: yOffset)
+        yOffset = addSlider("Pos X", min: -15, max: 150, value: 12, tag: 2, at: yOffset)
+        yOffset = addSlider("Pos Y", min: -15, max: 155, value: -6, tag: 3, at: yOffset)
+        yOffset = addSlider("Pos Z", min: 1, max: 150, value: 8, tag: 4, at: yOffset)
         yOffset = addSlider("Rot X", min: -180, max: 180, value: 0, tag: 6, at: yOffset)
         yOffset = addSlider("Rot Y", min: -180, max: 180, value: 0, tag: 7, at: yOffset)
         yOffset = addSlider("Rot Z", min: -180, max: 180, value: 0, tag: 8, at: yOffset)
-        yOffset = addSlider("Shadow Bias", min: 0.01, max: 0.3, value: 0.1, tag: 5, at: yOffset)
+        yOffset = addSlider("Shadow Bias", min: 0.1, max: 5.0, value: 1.5, tag: 5, at: yOffset)
+        yOffset = addSlider("Shadow Distance", min: 5, max: 30, value: 12, tag: 9, at: yOffset)
+        // SpotLight cone angles control shadow softness (larger outer angle = softer shadows)
+        yOffset = addSlider("Spot Inner Angle", min: 20, max: 80, value: 60, tag: 50, at: yOffset)
+        yOffset = addSlider("Spot Outer Angle", min: 30, max: 120, value: 80, tag: 51, at: yOffset)
+
+        // SpotLight toggle for ray-traced shadows
+        let spotLightCheckbox = NSButton(checkboxWithTitle: "Use SpotLight (ray-traced shadows)", target: self, action: #selector(toggleSpotLight(_:)))
+        spotLightCheckbox.frame = NSRect(x: 10, y: yOffset - 4, width: 260, height: 20)
+        (spotLightCheckbox.cell as? NSButtonCell)?.attributedTitle = NSAttributedString(
+            string: "Use SpotLight (ray-traced shadows)",
+            attributes: [.foregroundColor: NSColor.white, .font: NSFont.systemFont(ofSize: 11)]
+        )
+        controlPanel.addSubview(spotLightCheckbox)
+        yOffset -= 28
 
         // Fill Light Section (frontal, soft)
         yOffset -= 10
@@ -295,14 +327,14 @@ class ClockGridView: NSView {
         }
 
         switch sender.tag {
-        // Key Light
-        case 1: keyLight.light.intensity = value
+        // Key Light (controls both DirectionalLight and SpotLight)
+        case 1:
+            keyLight.light.intensity = value
+            // SpotLight needs much higher intensity due to attenuation
+            keySpotLight.light.intensity = value * 40
         case 2, 3, 4, 6, 7, 8: updateKeyLightPosition()
-        case 5:
-            keyLight.shadow = DirectionalLightComponent.Shadow(
-                maximumDistance: 20,
-                depthBias: value
-            )
+        case 5, 9:
+            updateShadowSettings()
 
         // Fill Light
         case 10: fillLight.light.intensity = value
@@ -312,6 +344,10 @@ class ClockGridView: NSView {
         case 40: rimLight.light.intensity = value
         case 41, 42: updateRimLightPosition()
 
+        // SpotLight cone angles (affects shadow softness)
+        case 50: keySpotLight.light.innerAngleInDegrees = value
+        case 51: keySpotLight.light.outerAngleInDegrees = value
+
         // Frame Material
         case 20, 21: updateFrameMaterial()
 
@@ -320,6 +356,22 @@ class ClockGridView: NSView {
 
         default: break
         }
+    }
+
+    @objc private func toggleSpotLight(_ sender: NSButton) {
+        useSpotLight = sender.state == .on
+        keyLight.isEnabled = !useSpotLight
+        keySpotLight.isEnabled = useSpotLight
+    }
+
+    private func updateShadowSettings() {
+        guard let biasSlider = controlPanel.viewWithTag(5) as? NSSlider,
+              let distanceSlider = controlPanel.viewWithTag(9) as? NSSlider else { return }
+
+        keyLight.shadow = DirectionalLightComponent.Shadow(
+            maximumDistance: distanceSlider.floatValue,
+            depthBias: biasSlider.floatValue
+        )
     }
 
     private func updateKeyLightPosition() {
@@ -345,6 +397,12 @@ class ClockGridView: NSView {
                                   simd_quatf(angle: rotY, axis: [0, 1, 0]) *
                                   simd_quatf(angle: rotZ, axis: [0, 0, 1])
         keyLight.transform.rotation = keyLight.transform.rotation * additionalRotation
+
+        // Also update SpotLight position and rotation
+        // SpotLight needs to be further back to cover the scene with its cone
+        let spotPos: SIMD3<Float> = [pos.x, pos.y, pos.z + 7]
+        keySpotLight.look(at: [0, 0, 0], from: spotPos, relativeTo: nil)
+        keySpotLight.transform.rotation = keySpotLight.transform.rotation * additionalRotation
     }
 
     private func updateFillLightPosition() {
@@ -405,7 +463,7 @@ class ClockGridView: NSView {
     }
 
     private func loadModelTemplate() -> ModelEntity? {
-        guard let url = Bundle.main.url(forResource: "box_with_cutout_5", withExtension: "usdz") else {
+        guard let url = Bundle.main.url(forResource: "box_with_cutout_7", withExtension: "usdz") else {
             print("USDZ file not found in bundle")
             return nil
         }

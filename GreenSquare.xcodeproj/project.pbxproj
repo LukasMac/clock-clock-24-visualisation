@@ -11,8 +11,8 @@
 		987AF82F2ECCC6080048C664 /* ClockGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AF82C2ECCC6080048C664 /* ClockGridView.swift */; };
 		987AF8302ECCC6080048C664 /* ClockOrchestrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */; };
 		987AF8312ECCC6080048C664 /* ClockOrchestrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */; };
-		98E8D6DE2EDA3A98002F1E2F /* box_with_cutout_5.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 98E8D6DD2EDA3A98002F1E2F /* box_with_cutout_5.usdz */; };
-		98E8D6DF2EDA3A98002F1E2F /* box_with_cutout_5.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 98E8D6DD2EDA3A98002F1E2F /* box_with_cutout_5.usdz */; };
+		98E8D6E42EDC8649002F1E2F /* box_with_cutout_7.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 98E8D6E32EDC8649002F1E2F /* box_with_cutout_7.usdz */; };
+		98E8D6E52EDC8649002F1E2F /* box_with_cutout_7.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 98E8D6E32EDC8649002F1E2F /* box_with_cutout_7.usdz */; };
 		EFA812C8243FA7BF00482522 /* ClockScreenSaverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812C7243FA7BF00482522 /* ClockScreenSaverView.swift */; };
 		EFA812D0243FA8E500482522 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812CF243FA8E500482522 /* AppDelegate.swift */; };
 		EFA812D2243FA8E500482522 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812D1243FA8E500482522 /* ContentView.swift */; };
@@ -45,7 +45,7 @@
 /* Begin PBXFileReference section */
 		987AF82C2ECCC6080048C664 /* ClockGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockGridView.swift; sourceTree = "<group>"; };
 		987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockOrchestrator.swift; sourceTree = "<group>"; };
-		98E8D6DD2EDA3A98002F1E2F /* box_with_cutout_5.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = box_with_cutout_5.usdz; sourceTree = "<group>"; };
+		98E8D6E32EDC8649002F1E2F /* box_with_cutout_7.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = box_with_cutout_7.usdz; sourceTree = "<group>"; };
 		EFA812B9243FA79800482522 /* GreenSquare.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GreenSquare.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFA812C0243FA79800482522 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EFA812C6243FA7BF00482522 /* GreenSquare-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GreenSquare-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -148,7 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				EFA812D6243FA8E700482522 /* Preview Assets.xcassets */,
-				98E8D6DD2EDA3A98002F1E2F /* box_with_cutout_5.usdz */,
+				98E8D6E32EDC8649002F1E2F /* box_with_cutout_7.usdz */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -290,7 +290,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98E8D6DE2EDA3A98002F1E2F /* box_with_cutout_5.usdz in Resources */,
+				98E8D6E42EDC8649002F1E2F /* box_with_cutout_7.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,9 +299,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				EFA812DA243FA8E700482522 /* Main.storyboard in Resources */,
-				98E8D6DF2EDA3A98002F1E2F /* box_with_cutout_5.usdz in Resources */,
 				EFA812D7243FA8E700482522 /* Preview Assets.xcassets in Resources */,
 				EFA812D4243FA8E700482522 /* Assets.xcassets in Resources */,
+				98E8D6E52EDC8649002F1E2F /* box_with_cutout_7.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
