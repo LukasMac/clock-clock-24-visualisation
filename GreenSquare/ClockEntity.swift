@@ -34,11 +34,11 @@ class ClockEntity: Entity {
 
         guard let clockModel = clockModel else { return }
 
-        // Apply material
+        // Apply material - slightly glossy white (roughness 0.2 for subtle reflections)
         var material = SimpleMaterial()
         material.color = .init(tint: .white, texture: nil)
-        material.roughness = .init(floatLiteral: 0.3)
-        material.metallic = .init(floatLiteral: 0.5)
+        material.roughness = .init(floatLiteral: 0.2)
+        material.metallic = .init(floatLiteral: 0.0)
         clockModel.model?.materials = [material]
 
         // Base rotation for the model
@@ -105,5 +105,14 @@ class ClockEntity: Entity {
 
         pivotMinuteHand?.transform.rotation = simd_quatf(angle: minuteRadians, axis: [0, 0, 1])
         pivotHourHand?.transform.rotation = simd_quatf(angle: hourRadians, axis: [0, 0, 1])
+    }
+
+    /// Updates the clock body material
+    func updateMaterial(roughness: Float, metallic: Float) {
+        var material = SimpleMaterial()
+        material.color = .init(tint: .white, texture: nil)
+        material.roughness = .init(floatLiteral: roughness)
+        material.metallic = .init(floatLiteral: metallic)
+        clockModel?.model?.materials = [material]
     }
 }
