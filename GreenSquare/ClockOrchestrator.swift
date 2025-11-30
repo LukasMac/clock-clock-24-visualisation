@@ -11,10 +11,12 @@ struct ClockHandPosition {
     var hourHandDegrees: Float    // 0 = 12 o'clock, clockwise
     var minuteHandStep: Float = 0
     var hourHandStep: Float = 0
+    var startMinuteHandDegrees: Float = 0
+    var startHourHandDegrees: Float = 0
 
-    static let noon = ClockHandPosition(minuteHandDegrees: 0, hourHandDegrees: 0)
-    static let quarter = ClockHandPosition(minuteHandDegrees: 90, hourHandDegrees: 90)
-    static let half = ClockHandPosition(minuteHandDegrees: 180, hourHandDegrees: 180)
+    static let noon = ClockHandPosition(minuteHandDegrees: 0, hourHandDegrees: 0, startMinuteHandDegrees: 0, startHourHandDegrees: 0)
+    static let quarter = ClockHandPosition(minuteHandDegrees: 90, hourHandDegrees: 90, startMinuteHandDegrees: 90, startHourHandDegrees: 90)
+    static let half = ClockHandPosition(minuteHandDegrees: 180, hourHandDegrees: 180, startMinuteHandDegrees: 180, startHourHandDegrees: 180)
 }
 
 let digitsPositions: [[[[Float]]]] = [
@@ -103,6 +105,11 @@ class ClockOrchestrator {
     /// Frame counter for animations
     private var frameCount: Int = 0
 
+    /// Ease-in-out function: -(cos(π * x) - 1) / 2
+    private func easeInOut(_ x: Float) -> Float {
+        return -(cos(.pi * x) - 1) / 2
+    }
+
     init(rows: Int, columns: Int) {
         self.rows = rows
         self.columns = columns
@@ -122,14 +129,23 @@ class ClockOrchestrator {
     /// Set hand position for a specific clock
     func setPosition(row: Int, col: Int, position: ClockHandPosition) {
         guard row >= 0 && row < rows && col >= 0 && col < columns else { return }
-        positions[row][col] = position
+        positions[row][col] = ClockHandPosition(
+            minuteHandDegrees: position.minuteHandDegrees,
+            hourHandDegrees: position.hourHandDegrees,
+            minuteHandStep: position.minuteHandStep,
+            hourHandStep: position.hourHandStep,
+            startMinuteHandDegrees: position.minuteHandDegrees,
+            startHourHandDegrees: position.hourHandDegrees
+        )
     }
 
     /// Set hand position for a specific clock by degrees
     func setPosition(row: Int, col: Int, minuteDeg: Float, hourDeg: Float) {
         setPosition(row: row, col: col, position: ClockHandPosition(
             minuteHandDegrees: minuteDeg,
-            hourHandDegrees: hourDeg
+            hourHandDegrees: hourDeg,
+            startMinuteHandDegrees: minuteDeg,
+            startHourHandDegrees: hourDeg
         ))
     }
 
@@ -148,17 +164,27 @@ class ClockOrchestrator {
             paused = true
         }
 
-        // Default animation: wave pattern across the grid
+        // Default animation: wave pattern across the grid with easing
+        let progress = Float(frameCount) / Float(currentAnimationDurationInFrames)
+        let easedProgress = easeInOut(progress)
+
         for row in 0..<rows {
             for col in 0..<columns {
-                let minuteAngle = positions[row][col].minuteHandDegrees + positions[row][col].minuteHandStep
-                let hourAngle = positions[row][col].hourHandDegrees + positions[row][col].hourHandStep
+                // Calculate target positions (start + total distance)
+                let targetMinuteAngle = positions[row][col].startMinuteHandDegrees + (positions[row][col].minuteHandStep * Float(currentAnimationDurationInFrames))
+                let targetHourAngle = positions[row][col].startHourHandDegrees + (positions[row][col].hourHandStep * Float(currentAnimationDurationInFrames))
+
+                // Interpolate between start and target using eased progress
+                let minuteAngle = positions[row][col].startMinuteHandDegrees + (targetMinuteAngle - positions[row][col].startMinuteHandDegrees) * easedProgress
+                let hourAngle = positions[row][col].startHourHandDegrees + (targetHourAngle - positions[row][col].startHourHandDegrees) * easedProgress
 
                 positions[row][col] = ClockHandPosition(
                     minuteHandDegrees: minuteAngle.truncatingRemainder(dividingBy: 360),
                     hourHandDegrees: hourAngle.truncatingRemainder(dividingBy: 360),
                     minuteHandStep: positions[row][col].minuteHandStep,
                     hourHandStep: positions[row][col].hourHandStep,
+                    startMinuteHandDegrees: positions[row][col].startMinuteHandDegrees,
+                    startHourHandDegrees: positions[row][col].startHourHandDegrees
                 )
             }
         }
@@ -187,10 +213,10 @@ class ClockOrchestrator {
     
     func setEndPosition(number: Int, durationInFrames: Int) {
         print("setEndPosition", number, durationInFrames)
-        
+
         for row in 0..<rows {
             for col in 0..<columns {
-                // Each pair of columns represents a digit; 
+                // Each pair of columns represents a digit;
                 // extract the correct digit for this column pair
                 let digitIndex = col / 2
                 let digit = (number / Int(pow(10.0, Double(3 - digitIndex)))) % 10
@@ -199,6 +225,10 @@ class ClockOrchestrator {
 
                 let hourHandDistanceInDeg = digitPositions[row][column][0] - positions[row][col].hourHandDegrees;
                 let minuteHandDistanceInDeg = digitPositions[row][column][1] - positions[row][col].minuteHandDegrees;
+
+                // Store the starting positions for easing
+                positions[row][col].startMinuteHandDegrees = positions[row][col].minuteHandDegrees
+                positions[row][col].startHourHandDegrees = positions[row][col].hourHandDegrees
 
                 positions[row][col].hourHandStep = hourHandDistanceInDeg / Float(durationInFrames)
                 positions[row][col].minuteHandStep = minuteHandDistanceInDeg / Float(durationInFrames)

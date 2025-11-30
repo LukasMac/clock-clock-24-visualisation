@@ -15,11 +15,12 @@ class ClockScreenSaverView: ScreenSaverView {
 
     private var lastMinute: Int = -1
     private var frameCount: Int = 0
+    private let framesPerSecond: Int = 60
     private let checkIntervalFrames: Int = 120 // Check every 2 seconds at 60 FPS
 
     override init?(frame: CGRect, isPreview: Bool) {
         super.init(frame: frame, isPreview: isPreview)
-        self.animationTimeInterval = 1 / 60.0
+        self.animationTimeInterval = 1 / Double(framesPerSecond)
         addSubview(clockGridView)
     }
 
@@ -57,7 +58,7 @@ class ClockScreenSaverView: ScreenSaverView {
                 let mm = String(format: "%02d", minute)
                 let hhmmString = hh + mm
                 if let hhmm = Int(hhmmString) {
-                    orchestrator.setEndPosition(number: hhmm, durationInFrames: 20 * 10)
+                    orchestrator.setEndPosition(number: hhmm, durationInFrames: framesPerSecond * 8)
                 }
             }
         }
@@ -73,6 +74,6 @@ class ClockScreenSaverView: ScreenSaverView {
     }
     
     func test(digit: Int) {
-        orchestrator.setEndPosition(number: digit, durationInFrames: 9 * 10)
+        orchestrator.setEndPosition(number: digit, durationInFrames: framesPerSecond * 8)
     }
 }
