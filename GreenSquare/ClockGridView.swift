@@ -79,7 +79,7 @@ class ClockGridView: NSView {
         let wallMesh = MeshResource.generatePlane(width: wallSize, height: wallSize)
         // Wall material - medium gray to match background
         var wallMaterial = SimpleMaterial()
-        wallMaterial.color = .init(tint: .init(red: 0.816, green: 0.816, blue: 0.816, alpha: 1.0), texture: nil)
+        wallMaterial.color = .init(tint: .white, texture: nil)
         wallMaterial.roughness = .init(floatLiteral: 0.9)
         wallMaterial.metallic = .init(floatLiteral: 0.0)
         wall = ModelEntity(mesh: wallMesh, materials: [wallMaterial])
@@ -160,10 +160,34 @@ class ClockGridView: NSView {
         // Position camera to view entire grid
         setupCamera()
 
-        // Disable default environment/IBL lighting completely so scene is black without lights
-        // Use a very negative exponent to effectively disable IBL
-        arView.environment.lighting.intensityExponent = -10.0
-        arView.environment.lighting.resource = nil
+        // Try to completely disable IBL by creating a black environment
+        do {
+            // Create a small black image for environment lighting
+            let size = 64
+            var blackPixels = [UInt8](repeating: 0, count: size * size * 4)
+            let data = Data(blackPixels)
+
+            if let provider = CGDataProvider(data: data as CFData),
+               let cgImage = CGImage(
+                   width: size,
+                   height: size,
+                   bitsPerComponent: 8,
+                   bitsPerPixel: 32,
+                   bytesPerRow: size * 4,
+                   space: CGColorSpaceCreateDeviceRGB(),
+                   bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue),
+                   provider: provider,
+                   decode: nil,
+                   shouldInterpolate: false,
+                   intent: .defaultIntent
+               ) {
+                let blackEnv = try EnvironmentResource(equirectangular: cgImage)
+                arView.environment.lighting.resource = blackEnv
+            }
+        } catch {
+            print("Failed to create black environment: \(error)")
+        }
+        arView.environment.lighting.intensityExponent = 0.0
 
         // Setup control panel for adjusting lighting
         setupControlPanel()
