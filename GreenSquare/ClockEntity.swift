@@ -107,12 +107,37 @@ class ClockEntity: Entity {
         pivotHourHand?.transform.rotation = simd_quatf(angle: hourRadians, axis: [0, 0, 1])
     }
 
-    /// Updates the clock body material
-    func updateMaterial(roughness: Float, metallic: Float) {
+    /// Updates the clock body and hand materials
+    func updateMaterial(roughness: Float, metallic: Float, handRoughness: Float = 0.2, handMetallic: Float = 0.8) {
+        // Update clock body material
         var material = SimpleMaterial()
         material.color = .init(tint: .white, texture: nil)
         material.roughness = .init(floatLiteral: roughness)
         material.metallic = .init(floatLiteral: metallic)
         clockModel?.model?.materials = [material]
+
+        // Update hand materials
+        var handMaterial = SimpleMaterial()
+        handMaterial.color = .init(tint: .black, texture: nil)
+        handMaterial.roughness = .init(floatLiteral: handRoughness)
+        handMaterial.metallic = .init(floatLiteral: handMetallic)
+
+        // Find and update minute hand
+        if let minuteHand = pivotMinuteHand?.children.first as? ModelEntity {
+            minuteHand.model?.materials = [handMaterial]
+        }
+
+        // Find and update hour hand
+        if let hourHand = pivotHourHand?.children.first as? ModelEntity {
+            hourHand.model?.materials = [handMaterial]
+        }
+
+        // Find and update center cylinder
+        if let centerCylinder = clockModel?.children.first(where: { $0 is ModelEntity && $0 != pivotMinuteHand && $0 != pivotHourHand }) as? ModelEntity {
+            // Only update if it's not the pivot entities
+            if centerCylinder.name != "PivotMinuteHand" && centerCylinder.name != "PivotHourHand" {
+                centerCylinder.model?.materials = [handMaterial]
+            }
+        }
     }
 }

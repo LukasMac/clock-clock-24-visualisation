@@ -6,12 +6,110 @@
 import AppKit
 import RealityKit
 
+// MARK: - Scene Configuration
+
+struct SceneConfig {
+    struct LightPosition {
+        var intensity: Float
+        var x: Float
+        var y: Float
+        var z: Float
+        var rotX: Float
+        var rotY: Float
+        var rotZ: Float
+    }
+
+    struct SpotLightConfig {
+        var position: LightPosition
+        var innerAngle: Float
+        var outerAngle: Float
+    }
+
+    struct ShadowConfig {
+        var depthBias: Float
+        var maxDistance: Float
+    }
+
+    struct MaterialConfig {
+        var roughness: Float
+        var metallic: Float
+    }
+
+    struct CameraConfig {
+        var x: Float
+        var y: Float
+        var z: Float
+        var rotX: Float
+        var rotY: Float
+        var rotZ: Float
+        var fov: Float
+    }
+
+    var keyLight: LightPosition
+    var keySpotLight: SpotLightConfig
+    var shadow: ShadowConfig
+    var fillLight: LightPosition
+    var rimLight: LightPosition
+    var clockMaterial: MaterialConfig
+    var handMaterial: MaterialConfig
+    var camera: CameraConfig
+    var ambient: Float
+
+    static let `default` = SceneConfig(
+        keyLight: LightPosition(
+            intensity: 165000,
+            x: 13.97, y: 10.68, z: 4.33,
+            rotX: -22.20, rotY: 30.25, rotZ: -44.09
+        ),
+        keySpotLight: SpotLightConfig(
+            position: LightPosition(
+                intensity: 7730000,  // SpotLight needs higher intensity due to attenuation
+                x: 16.0, y: 21.5, z: 14.14,  // Further back than keyLight to cover scene with cone
+                rotX: -32.20, rotY: 20.25, rotZ: -77.09
+            ),
+            innerAngle: 69.19,
+            outerAngle: 115.89
+        ),
+        shadow: ShadowConfig(
+            depthBias: 5.0,
+            maxDistance: 9.51
+        ),
+        fillLight: LightPosition(
+            intensity: 1087.83,
+            x: -2.53, y: -4.55, z: 5.25,
+            rotX: 0, rotY: 0, rotZ: 0
+        ),
+        rimLight: LightPosition(
+            intensity: 373.97,
+            x: -11.0, y: 6.46, z: -5,
+            rotX: 0, rotY: 0, rotZ: 0
+        ),
+        clockMaterial: MaterialConfig(
+            roughness: 0.8,
+            metallic: 0.0
+        ),
+        handMaterial: MaterialConfig(
+            roughness: 0.90,
+            metallic: 0.20
+        ),
+        camera: CameraConfig(
+            x: 0, y: 0, z: 14.4,  // Will be recalculated based on grid size
+            rotX: 0, rotY: 0, rotZ: 0,
+            fov: 60
+        ),
+        ambient: 0.0
+    )
+}
+
 // Flipped NSView subclass for top-aligned content
 private class FlippedView: NSView {
     override var isFlipped: Bool { true }
 }
 
 class ClockGridView: NSView {
+
+    // Scene configuration
+    private let config = SceneConfig.default
     static let columns = 8
     static let rows = 3
 
@@ -83,7 +181,12 @@ class ClockGridView: NSView {
                 let y = startY - Float(row) * clockSpacing
                 let z: Float = 0
                 clock.position = [x, y, z]
-                clock.updateMaterial(roughness: 1.0, metallic: 0)
+                clock.updateMaterial(
+                    roughness: config.clockMaterial.roughness,
+                    metallic: config.clockMaterial.metallic,
+                    handRoughness: config.handMaterial.roughness,
+                    handMetallic: config.handMaterial.metallic
+                )
                 
 
                 anchor.addChild(clock)
@@ -144,52 +247,54 @@ class ClockGridView: NSView {
         anchor.addChild(rightFrame)
         frameEntities.append(rightFrame)
 
-        // 1. Main Key Light - Bottom-right, creates gradient: white (bottom-right) to dark (top-left)
-        // Slightly warm white (approx 6000K)
+        // 1. Main Key Light (DirectionalLight - disabled by default, SpotLight is used instead)
         keyLight = DirectionalLight()
-        keyLight.light.intensity = 1200
+        keyLight.light.intensity = config.keyLight.intensity
         keyLight.light.color = .init(red: 1.0, green: 0.98, blue: 0.95, alpha: 1.0)
-        // Position: bottom-right, angled to create gradient on wall toward top-left
-        keyLight.look(at: [-5, 3, 0], from: [12, -6, 8], relativeTo: nil)
-        // Enable soft shadow casting
-        // depthBias: Higher values reduce shadow acne (vertical line artifacts)
-        // maximumDistance: Smaller values improve shadow quality/resolution
+        setKeyLightPosition(
+            x: config.keyLight.x, y: config.keyLight.y, z: config.keyLight.z,
+            rotX: config.keyLight.rotX, rotY: config.keyLight.rotY, rotZ: config.keyLight.rotZ
+        )
         keyLight.shadow = DirectionalLightComponent.Shadow(
-            maximumDistance: 12,
-            depthBias: 1.5
+            maximumDistance: config.shadow.maxDistance,
+            depthBias: config.shadow.depthBias
         )
         keyLight.isEnabled = false
         anchor.addChild(keyLight)
 
-        // Alternative: SpotLight for ray-traced shadows (smoother quality)
-        // SpotLights in RealityKit 4.0 produce ray-traced shadows
+        // 2. Key SpotLight - ray-traced shadows (smoother quality)
         keySpotLight = SpotLight()
-        keySpotLight.light.intensity = 165_000  // SpotLights need higher intensity
+        keySpotLight.light.intensity = config.keySpotLight.position.intensity
         keySpotLight.light.color = .init(red: 1.0, green: 0.98, blue: 0.95, alpha: 1.0)
-        keySpotLight.light.innerAngleInDegrees = 69
-        keySpotLight.light.outerAngleInDegrees = 115
+        keySpotLight.light.innerAngleInDegrees = config.keySpotLight.innerAngle
+        keySpotLight.light.outerAngleInDegrees = config.keySpotLight.outerAngle
         keySpotLight.light.attenuationRadius = 50
-        setKeySpotLightPosition(x: 13, y: 10, z: 4.3, rotX: 0, rotY: 0, rotZ: 0)
+        setKeySpotLightPosition(
+            x: config.keySpotLight.position.x, y: config.keySpotLight.position.y, z: config.keySpotLight.position.z,
+            rotX: config.keySpotLight.position.rotX, rotY: config.keySpotLight.position.rotY, rotZ: config.keySpotLight.position.rotZ
+        )
         keySpotLight.shadow = SpotLightComponent.Shadow()
         keySpotLight.isEnabled = true
         anchor.addChild(keySpotLight)
 
-        // 2. Soft Fill Light - Frontal, provides general illumination
-        // Lower intensity to maintain the gradient effect
+        // 3. Fill Light - Frontal, provides general illumination
         fillLight = DirectionalLight()
-        fillLight.light.intensity = 850
+        fillLight.light.intensity = config.fillLight.intensity
         fillLight.light.color = .init(red: 0.95, green: 0.98, blue: 1.0, alpha: 1.0)
-        // Position: frontal, slightly from below-right to enhance gradient
-        setFillLightPosition(x: 5, y: -2, z: 12, rotX: 0, rotY: 0, rotZ: 0)
+        setFillLightPosition(
+            x: config.fillLight.x, y: config.fillLight.y, z: config.fillLight.z,
+            rotX: config.fillLight.rotX, rotY: config.fillLight.rotY, rotZ: config.fillLight.rotZ
+        )
         anchor.addChild(fillLight)
 
-        // 3. Subtle Rim/Edge Light - Back-left, very low intensity
-        // Adds slight definition to top-left area without breaking gradient
+        // 4. Rim/Edge Light - Back-left, subtle definition
         rimLight = DirectionalLight()
-        rimLight.light.intensity = 50
+        rimLight.light.intensity = config.rimLight.intensity
         rimLight.light.color = .init(white: 1.0, alpha: 1.0)
-        // Position: back-left
-        setRimLightPosition(x: -8, y: 4, z: -5, rotX: 0, rotY: 0, rotZ: 0)
+        setRimLightPosition(
+            x: config.rimLight.x, y: config.rimLight.y, z: config.rimLight.z,
+            rotX: config.rimLight.rotX, rotY: config.rimLight.rotY, rotZ: config.rimLight.rotZ
+        )
         anchor.addChild(rimLight)
 
         // Position camera to view entire grid
@@ -226,7 +331,7 @@ class ClockGridView: NSView {
 
         // Setup control panel for adjusting lighting (only in Preview mode)
         if showControls {
-//            setupControlPanel()
+            setupControlPanel()
         }
     }
 
@@ -275,18 +380,19 @@ class ClockGridView: NSView {
 
         // Key Light Section (bottom-right, creates gradient)
         yOffset = addSectionHeader("Key Light (gradient source)", at: yOffset)
-        yOffset = addSlider("Intensity", min: 0, max: 200000, value: 1200, tag: 1, at: yOffset)
-        yOffset = addSlider("Pos X", min: -15, max: 150, value: 12, tag: 2, at: yOffset)
-        yOffset = addSlider("Pos Y", min: -15, max: 155, value: -6, tag: 3, at: yOffset)
-        yOffset = addSlider("Pos Z", min: 1, max: 150, value: 8, tag: 4, at: yOffset)
-        yOffset = addSlider("Rot X", min: -180, max: 180, value: 0, tag: 6, at: yOffset)
-        yOffset = addSlider("Rot Y", min: -180, max: 180, value: 0, tag: 7, at: yOffset)
-        yOffset = addSlider("Rot Z", min: -180, max: 180, value: 0, tag: 8, at: yOffset)
-        yOffset = addSlider("Shadow Bias", min: 0.1, max: 5.0, value: 1.5, tag: 5, at: yOffset)
-        yOffset = addSlider("Shadow Distance", min: 5, max: 30, value: 12, tag: 9, at: yOffset)
-        // SpotLight cone angles control shadow softness (larger outer angle = softer shadows)
-        yOffset = addSlider("Spot Inner Angle", min: 20, max: 80, value: 60, tag: 50, at: yOffset)
-        yOffset = addSlider("Spot Outer Angle", min: 30, max: 120, value: 80, tag: 51, at: yOffset)
+        yOffset = addSlider("Intensity", min: 0, max: 200000, value: Double(config.keyLight.intensity), tag: 1, at: yOffset)
+        yOffset = addSlider("Pos X", min: -15, max: 150, value: Double(config.keyLight.x), tag: 2, at: yOffset)
+        yOffset = addSlider("Pos Y", min: -15, max: 155, value: Double(config.keyLight.y), tag: 3, at: yOffset)
+        yOffset = addSlider("Pos Z", min: 1, max: 150, value: Double(config.keyLight.z), tag: 4, at: yOffset)
+        yOffset = addSlider("Rot X", min: -180, max: 180, value: Double(config.keyLight.rotX), tag: 6, at: yOffset)
+        yOffset = addSlider("Rot Y", min: -180, max: 180, value: Double(config.keyLight.rotY), tag: 7, at: yOffset)
+        yOffset = addSlider("Rot Z", min: -180, max: 180, value: Double(config.keyLight.rotZ), tag: 8, at: yOffset)
+        yOffset = addSlider("Shadow Bias", min: 0.1, max: 10.0, value: Double(config.shadow.depthBias), tag: 5, at: yOffset)
+        yOffset = addSlider("Shadow Distance", min: 5, max: 30, value: Double(config.shadow.maxDistance), tag: 9, at: yOffset)
+        // SpotLight controls
+        yOffset = addSlider("Spot Intensity", min: 0, max: 10000000, value: Double(config.keySpotLight.position.intensity), tag: 52, at: yOffset)
+        yOffset = addSlider("Spot Inner Angle", min: 20, max: 80, value: Double(config.keySpotLight.innerAngle), tag: 50, at: yOffset)
+        yOffset = addSlider("Spot Outer Angle", min: 30, max: 120, value: Double(config.keySpotLight.outerAngle), tag: 51, at: yOffset)
 
         // SpotLight toggle for ray-traced shadows
         let spotLightCheckbox = NSButton(checkboxWithTitle: "Use SpotLight (ray-traced shadows)", target: self, action: #selector(toggleSpotLight(_:)))
@@ -297,48 +403,50 @@ class ClockGridView: NSView {
         // Fill Light Section (frontal, soft)
         yOffset += 10
         yOffset = addSectionHeader("Fill Light (frontal)", at: yOffset)
-        yOffset = addSlider("Intensity", min: 0, max: 1000, value: 300, tag: 10, at: yOffset)
-        yOffset = addSlider("Pos X", min: -15, max: 15, value: 5, tag: 11, at: yOffset)
-        yOffset = addSlider("Pos Y", min: -10, max: 15, value: -2, tag: 12, at: yOffset)
-        yOffset = addSlider("Pos Z", min: -15, max: 30, value: 12, tag: 13, at: yOffset)
-        yOffset = addSlider("Rot X", min: -180, max: 180, value: 0, tag: 14, at: yOffset)
-        yOffset = addSlider("Rot Y", min: -180, max: 180, value: 0, tag: 15, at: yOffset)
-        yOffset = addSlider("Rot Z", min: -180, max: 180, value: 0, tag: 16, at: yOffset)
+        yOffset = addSlider("Intensity", min: 0, max: 2000, value: Double(config.fillLight.intensity), tag: 10, at: yOffset)
+        yOffset = addSlider("Pos X", min: -15, max: 15, value: Double(config.fillLight.x), tag: 11, at: yOffset)
+        yOffset = addSlider("Pos Y", min: -10, max: 15, value: Double(config.fillLight.y), tag: 12, at: yOffset)
+        yOffset = addSlider("Pos Z", min: -15, max: 30, value: Double(config.fillLight.z), tag: 13, at: yOffset)
+        yOffset = addSlider("Rot X", min: -180, max: 180, value: Double(config.fillLight.rotX), tag: 14, at: yOffset)
+        yOffset = addSlider("Rot Y", min: -180, max: 180, value: Double(config.fillLight.rotY), tag: 15, at: yOffset)
+        yOffset = addSlider("Rot Z", min: -180, max: 180, value: Double(config.fillLight.rotZ), tag: 16, at: yOffset)
 
         // Rim Light Section (back-left, subtle)
         yOffset += 10
         yOffset = addSectionHeader("Rim Light (back-left)", at: yOffset)
-        yOffset = addSlider("Intensity", min: 0, max: 500, value: 50, tag: 40, at: yOffset)
-        yOffset = addSlider("Pos X", min: -15, max: 15, value: -8, tag: 41, at: yOffset)
-        yOffset = addSlider("Pos Y", min: -10, max: 10, value: 4, tag: 42, at: yOffset)
-        yOffset = addSlider("Pos Z", min: -15, max: 15, value: -5, tag: 43, at: yOffset)
-        yOffset = addSlider("Rot X", min: -180, max: 180, value: 0, tag: 44, at: yOffset)
-        yOffset = addSlider("Rot Y", min: -180, max: 180, value: 0, tag: 45, at: yOffset)
-        yOffset = addSlider("Rot Z", min: -180, max: 180, value: 0, tag: 46, at: yOffset)
+        yOffset = addSlider("Intensity", min: 0, max: 1000, value: Double(config.rimLight.intensity), tag: 40, at: yOffset)
+        yOffset = addSlider("Pos X", min: -15, max: 15, value: Double(config.rimLight.x), tag: 41, at: yOffset)
+        yOffset = addSlider("Pos Y", min: -10, max: 10, value: Double(config.rimLight.y), tag: 42, at: yOffset)
+        yOffset = addSlider("Pos Z", min: -15, max: 15, value: Double(config.rimLight.z), tag: 43, at: yOffset)
+        yOffset = addSlider("Rot X", min: -180, max: 180, value: Double(config.rimLight.rotX), tag: 44, at: yOffset)
+        yOffset = addSlider("Rot Y", min: -180, max: 180, value: Double(config.rimLight.rotY), tag: 45, at: yOffset)
+        yOffset = addSlider("Rot Z", min: -180, max: 180, value: Double(config.rimLight.rotZ), tag: 46, at: yOffset)
 
         // Material Section (applies to frames and clocks)
         yOffset += 10
         yOffset = addSectionHeader("Material (Frame + Clocks)", at: yOffset)
-        yOffset = addSlider("Roughness", min: 0, max: 1, value: 0.2, tag: 20, at: yOffset)
-        yOffset = addSlider("Metallic", min: 0, max: 1, value: 0, tag: 21, at: yOffset)
+        yOffset = addSlider("Roughness", min: 0, max: 1, value: Double(config.clockMaterial.roughness), tag: 20, at: yOffset)
+        yOffset = addSlider("Metallic", min: 0, max: 1, value: Double(config.clockMaterial.metallic), tag: 21, at: yOffset)
+        yOffset = addSlider("Hand Roughness", min: 0, max: 1, value: Double(config.handMaterial.roughness), tag: 22, at: yOffset)
+        yOffset = addSlider("Hand Metallic", min: 0, max: 1, value: Double(config.handMaterial.metallic), tag: 23, at: yOffset)
 
         // Environment
         yOffset += 10
         yOffset = addSectionHeader("Environment", at: yOffset)
-        yOffset = addSlider("Ambient", min: 0, max: 2, value: 0, tag: 30, at: yOffset)
+        yOffset = addSlider("Ambient", min: 0, max: 2, value: Double(config.ambient), tag: 30, at: yOffset)
 
         // Camera Section
         yOffset += 10
         yOffset = addSectionHeader("Camera", at: yOffset)
-        // Calculate default camera distance
+        // Camera Z is calculated based on grid size, but can be overridden
         let defaultCameraZ = max(Float(ClockGridView.columns), Float(ClockGridView.rows)) * clockSpacing * 0.9
-        yOffset = addSlider("Pos X", min: -20, max: 20, value: 0, tag: 60, at: yOffset)
-        yOffset = addSlider("Pos Y", min: -20, max: 20, value: 0, tag: 61, at: yOffset)
-        yOffset = addSlider("Pos Z", min: 5, max: 50, value: Double(defaultCameraZ), tag: 62, at: yOffset)
-        yOffset = addSlider("Rot X", min: -180, max: 180, value: 0, tag: 63, at: yOffset)
-        yOffset = addSlider("Rot Y", min: -180, max: 180, value: 0, tag: 64, at: yOffset)
-        yOffset = addSlider("Rot Z", min: -180, max: 180, value: 0, tag: 65, at: yOffset)
-        yOffset = addSlider("FOV", min: 0, max: 120, value: 60, tag: 66, at: yOffset)
+        yOffset = addSlider("Pos X", min: -20, max: 20, value: Double(config.camera.x), tag: 60, at: yOffset)
+        yOffset = addSlider("Pos Y", min: -20, max: 20, value: Double(config.camera.y), tag: 61, at: yOffset)
+        yOffset = addSlider("Pos Z", min: 5, max: 50, value: Double(config.camera.z != 0 ? config.camera.z : defaultCameraZ), tag: 62, at: yOffset)
+        yOffset = addSlider("Rot X", min: -180, max: 180, value: Double(config.camera.rotX), tag: 63, at: yOffset)
+        yOffset = addSlider("Rot Y", min: -180, max: 180, value: Double(config.camera.rotY), tag: 64, at: yOffset)
+        yOffset = addSlider("Rot Z", min: -180, max: 180, value: Double(config.camera.rotZ), tag: 65, at: yOffset)
+        yOffset = addSlider("FOV", min: 10, max: 120, value: Double(config.camera.fov), tag: 66, at: yOffset)
 
         // Print button
         yOffset += 10
@@ -400,8 +508,6 @@ class ClockGridView: NSView {
         // Key Light (controls both DirectionalLight and SpotLight)
         case 1:
             keyLight.light.intensity = value
-            // SpotLight needs much higher intensity due to attenuation
-            keySpotLight.light.intensity = value * 40
         case 2, 3, 4, 6, 7, 8: updateKeyLightPosition()
         case 5, 9:
             updateShadowSettings()
@@ -414,12 +520,13 @@ class ClockGridView: NSView {
         case 40: rimLight.light.intensity = value
         case 41, 42, 43, 44, 45, 46: updateRimLightPosition()
 
-        // SpotLight cone angles (affects shadow softness)
+        // SpotLight controls
         case 50: keySpotLight.light.innerAngleInDegrees = value
         case 51: keySpotLight.light.outerAngleInDegrees = value
+        case 52: keySpotLight.light.intensity = value
 
         // Frame Material
-        case 20, 21: updateFrameMaterial()
+        case 20, 21, 22, 23: updateFrameMaterial()
 
         // Environment
         case 30: arView.environment.lighting.intensityExponent = value
@@ -475,20 +582,50 @@ class ClockGridView: NSView {
         keyLight.transform.rotation = keyLight.transform.rotation * additionalRotation
 
         // Also update SpotLight position and rotation
-        // SpotLight needs to be further back to cover the scene with its cone
-        setKeySpotLightPosition(x: pos.x, y: pos.y, z: pos.z + 7, rotX: rotX, rotY: rotY, rotZ: rotZ)
+        setKeySpotLightPosition(x: pos.x, y: pos.y, z: pos.z, rotX: rotXSlider.floatValue, rotY: rotYSlider.floatValue, rotZ: rotZSlider.floatValue)
+    }
+
+    private func setKeyLightPosition(x: Float, y: Float, z: Float, rotX: Float, rotY: Float, rotZ: Float) {
+        let pos: SIMD3<Float> = [x, y, z]
+        keyLight.look(at: [0, 0, 0], from: pos, relativeTo: nil)
+
+        let rotXRad = rotX * .pi / 180.0
+        let rotYRad = rotY * .pi / 180.0
+        let rotZRad = rotZ * .pi / 180.0
+        let additionalRotation = simd_quatf(angle: rotXRad, axis: [1, 0, 0]) *
+                                  simd_quatf(angle: rotYRad, axis: [0, 1, 0]) *
+                                  simd_quatf(angle: rotZRad, axis: [0, 0, 1])
+        keyLight.transform.rotation = keyLight.transform.rotation * additionalRotation
     }
 
     private func setKeySpotLightPosition(x: Float, y: Float, z: Float, rotX: Float, rotY: Float, rotZ: Float) {
-        let additionalRotation = simd_quatf(angle: rotX, axis: [1, 0, 0]) *
-                                  simd_quatf(angle: rotY, axis: [0, 1, 0]) *
-                                  simd_quatf(angle: rotZ, axis: [0, 0, 1])
-
         let spotPos: SIMD3<Float> = [x, y, z]
-        keySpotLight.look(at: [0, 0, 0], from: spotPos, relativeTo: nil)
-        keySpotLight.transform.rotation = keySpotLight.transform.rotation * additionalRotation
+
+        // Set position first
+        keySpotLight.position = spotPos
+
+        // Calculate direction to look at center
+        let direction = normalize(SIMD3<Float>(0, 0, 0) - spotPos)
+
+        // Create rotation to face the target
+        let up = SIMD3<Float>(0, 1, 0)
+        let right = normalize(cross(up, -direction))
+        let adjustedUp = cross(-direction, right)
+
+        // Build rotation matrix and convert to quaternion
+        let rotationMatrix = simd_float3x3(columns: (right, adjustedUp, -direction))
+        var baseRotation = simd_quatf(rotationMatrix)
+
+        // Apply additional rotation offsets (convert degrees to radians)
+        let rotXRad = rotX * .pi / 180.0
+        let rotYRad = rotY * .pi / 180.0
+        let rotZRad = rotZ * .pi / 180.0
+        let additionalRotation = simd_quatf(angle: rotXRad, axis: [1, 0, 0]) *
+                                  simd_quatf(angle: rotYRad, axis: [0, 1, 0]) *
+                                  simd_quatf(angle: rotZRad, axis: [0, 0, 1])
+        keySpotLight.transform.rotation = baseRotation * additionalRotation
     }
-    
+
     private func updateFillLightPosition() {
         guard let contentView = controlContentView,
               let xSlider = contentView.viewWithTag(11) as? NSSlider,
@@ -558,10 +695,14 @@ class ClockGridView: NSView {
     private func updateFrameMaterial() {
         guard let contentView = controlContentView,
               let roughnessSlider = contentView.viewWithTag(20) as? NSSlider,
-              let metallicSlider = contentView.viewWithTag(21) as? NSSlider else { return }
+              let metallicSlider = contentView.viewWithTag(21) as? NSSlider,
+              let handRoughnessSlider = contentView.viewWithTag(22) as? NSSlider,
+              let handMetallicSlider = contentView.viewWithTag(23) as? NSSlider else { return }
 
         let roughness = roughnessSlider.floatValue
         let metallic = metallicSlider.floatValue
+        let handRoughness = handRoughnessSlider.floatValue
+        let handMetallic = handMetallicSlider.floatValue
 
         var material = SimpleMaterial()
         material.color = .init(tint: .white, texture: nil)
@@ -576,7 +717,7 @@ class ClockGridView: NSView {
         // Update clock entities with the same material
         for row in clocks {
             for clock in row {
-                clock.updateMaterial(roughness: roughness, metallic: metallic)
+                clock.updateMaterial(roughness: roughness, metallic: metallic, handRoughness: handRoughness, handMetallic: handMetallic)
             }
         }
     }
@@ -589,14 +730,19 @@ class ClockGridView: NSView {
         print("keyLight rotation (deg): [\((cv.viewWithTag(6) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(7) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(8) as? NSSlider)?.floatValue ?? 0)]")
         print("keyLight shadow depthBias: \((cv.viewWithTag(5) as? NSSlider)?.floatValue ?? 0)")
         print("keyLight shadow maxDistance: \((cv.viewWithTag(9) as? NSSlider)?.floatValue ?? 0)")
+        print("keySpotLight.light.intensity = \((cv.viewWithTag(52) as? NSSlider)?.floatValue ?? 0)")
+        print("keySpotLight.light.innerAngleInDegrees = \((cv.viewWithTag(50) as? NSSlider)?.floatValue ?? 0)")
+        print("keySpotLight.light.outerAngleInDegrees = \((cv.viewWithTag(51) as? NSSlider)?.floatValue ?? 0)")
         print("fillLight.light.intensity = \((cv.viewWithTag(10) as? NSSlider)?.floatValue ?? 0)")
         print("fillLight position: [\((cv.viewWithTag(11) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(12) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(13) as? NSSlider)?.floatValue ?? 0)]")
         print("fillLight rotation (deg): [\((cv.viewWithTag(14) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(15) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(16) as? NSSlider)?.floatValue ?? 0)]")
         print("rimLight.light.intensity = \((cv.viewWithTag(40) as? NSSlider)?.floatValue ?? 0)")
         print("rimLight position: [\((cv.viewWithTag(41) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(42) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(43) as? NSSlider)?.floatValue ?? 0)]")
         print("rimLight rotation (deg): [\((cv.viewWithTag(44) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(45) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(46) as? NSSlider)?.floatValue ?? 0)]")
-        print("material.roughness = \((cv.viewWithTag(20) as? NSSlider)?.floatValue ?? 0)")
-        print("material.metallic = \((cv.viewWithTag(21) as? NSSlider)?.floatValue ?? 0)")
+        print("clockMaterial.roughness = \((cv.viewWithTag(20) as? NSSlider)?.floatValue ?? 0)")
+        print("clockMaterial.metallic = \((cv.viewWithTag(21) as? NSSlider)?.floatValue ?? 0)")
+        print("handMaterial.roughness = \((cv.viewWithTag(22) as? NSSlider)?.floatValue ?? 0)")
+        print("handMaterial.metallic = \((cv.viewWithTag(23) as? NSSlider)?.floatValue ?? 0)")
         print("environment.lighting.intensityExponent = \((cv.viewWithTag(30) as? NSSlider)?.floatValue ?? 0)")
         print("camera position: [\((cv.viewWithTag(60) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(61) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(62) as? NSSlider)?.floatValue ?? 0)]")
         print("camera rotation (deg): [\((cv.viewWithTag(63) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(64) as? NSSlider)?.floatValue ?? 0), \((cv.viewWithTag(65) as? NSSlider)?.floatValue ?? 0)]")
