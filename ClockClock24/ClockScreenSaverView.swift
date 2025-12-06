@@ -16,7 +16,7 @@ class ClockScreenSaverView: ScreenSaverView {
     private var lastMinute: Int = -1
     private var frameCount: Int = 0
     private let framesPerSecond: Int = 60
-    private let checkIntervalFrames: Int = 120 // Check every 2 seconds at 60 FPS
+    private let checkIntervalFrames: Int = 30 * 2 // Check every 2 seconds at 60 FPS
 
     override init?(frame: CGRect, isPreview: Bool) {
         // Show controls only in Preview app (isPreview is true when running in Preview)
@@ -60,7 +60,7 @@ class ClockScreenSaverView: ScreenSaverView {
                 let mm = String(format: "%02d", minute)
                 let hhmmString = hh + mm
                 if let hhmm = Int(hhmmString) {
-                    orchestrator.setEndPosition(number: hhmm, durationInFrames: framesPerSecond * 8)
+                    orchestrator.setEndPosition(number: hhmm, durationInFrames: framesPerSecond * 6)
                 }
             }
         }
@@ -76,6 +76,6 @@ class ClockScreenSaverView: ScreenSaverView {
     }
     
     func test(digit: Int) {
-        orchestrator.setEndPosition(number: digit, durationInFrames: framesPerSecond * 8)
+        orchestrator.setEndPosition(number: digit, durationInFrames: framesPerSecond * 6)
     }
 }

@@ -74,7 +74,7 @@ class ClockEntity: Entity {
         clockModel.addChild(pivotHourHand!)
 
         // Create hour hand
-        let hourHandHeight: Float = 0.8
+        let hourHandHeight: Float = 0.85
         let hourHandMesh = MeshResource.generateBox(width: handWidth, height: hourHandHeight, depth: handHeight)
         var hourHandMaterial = SimpleMaterial()
         hourHandMaterial.color = .init(tint: .black, texture: nil)

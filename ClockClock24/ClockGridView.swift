@@ -130,7 +130,7 @@ class ClockGridView: NSView {
 
     // Spacing between clocks in 3D space
     // Slightly less than 2.0 to ensure clocks overlap and eliminate visible seams
-    private let clockSpacing: Float = 2
+    private let clockSpacing: Float = 1.85
 
     // Whether to show debug controls (only in Preview app)
     private let showControls: Bool
@@ -165,8 +165,8 @@ class ClockGridView: NSView {
         let modelTemplate = loadModelTemplate()
 
         // Calculate grid center offset
-        let gridWidth = Float(ClockGridView.columns - 1) * clockSpacing
-        let gridHeight = Float(ClockGridView.rows - 1) * clockSpacing
+        let gridWidth = Float(ClockGridView.columns-1) * clockSpacing
+        let gridHeight = Float(ClockGridView.rows-1) * clockSpacing
         let startX = -gridWidth / 2
         let startY = gridHeight / 2
 
@@ -222,28 +222,28 @@ class ClockGridView: NSView {
         frameMaterial.metallic = .init(floatLiteral: 0.0)
 
         // Top frame
-        let topFrameMesh = MeshResource.generateBox(width: Float(ClockGridView.columns * 2), height: frameThickness, depth: frameDepth)
+        let topFrameMesh = MeshResource.generateBox(width: Float(ClockGridView.columns) * clockSpacing, height: frameThickness, depth: frameDepth)
         let topFrame = ModelEntity(mesh: topFrameMesh, materials: [frameMaterial])
-        topFrame.position = [0, gridHeight / 2 + frameMargin, 0.75]
+        topFrame.position = [0, clockSpacing * Float(ClockGridView.rows) / 2 + frameThickness / 2, 0.75]
         anchor.addChild(topFrame)
         frameEntities.append(topFrame)
 
         // Bottom frame
         let bottomFrame = ModelEntity(mesh: topFrameMesh, materials: [frameMaterial])
-        bottomFrame.position = [0, -gridHeight / 2 - frameMargin, 0.75]
+        bottomFrame.position = [0, -clockSpacing * Float(ClockGridView.rows) / 2 - frameThickness / 2, 0.75]
         anchor.addChild(bottomFrame)
         frameEntities.append(bottomFrame)
 
         // Left frame
-        let sideFrameMesh = MeshResource.generateBox(width: frameThickness, height: Float(ClockGridView.rows * 2) + (frameThickness * 2), depth: frameDepth)
+        let sideFrameMesh = MeshResource.generateBox(width: frameThickness, height: Float(ClockGridView.rows) * clockSpacing + (frameThickness * 2), depth: frameDepth)
         let leftFrame = ModelEntity(mesh: sideFrameMesh, materials: [frameMaterial])
-        leftFrame.position = [-gridWidth / 2 - frameMargin, 0, 0.75]
+        leftFrame.position = [-clockSpacing * Float(ClockGridView.columns) / 2 - frameThickness / 2, 0, 0.75]
         anchor.addChild(leftFrame)
         frameEntities.append(leftFrame)
 
         // Right frame
         let rightFrame = ModelEntity(mesh: sideFrameMesh, materials: [frameMaterial])
-        rightFrame.position = [gridWidth / 2 + frameMargin, 0, 0.75]
+        rightFrame.position = [clockSpacing * Float(ClockGridView.columns) / 2 + frameThickness / 2, 0, 0.75]
         anchor.addChild(rightFrame)
         frameEntities.append(rightFrame)
 
@@ -331,7 +331,7 @@ class ClockGridView: NSView {
 
         // Setup control panel for adjusting lighting (only in Preview mode)
         if showControls {
-            setupControlPanel()
+//            setupControlPanel()
         }
     }
 
@@ -751,8 +751,11 @@ class ClockGridView: NSView {
     }
 
     private func loadModelTemplate() -> ModelEntity? {
-        guard let url = Bundle.main.url(forResource: "box_with_cutout_13", withExtension: "usdz") else {
-            print("USDZ file not found in bundle")
+        // Use Bundle(for:) to get the screensaver's bundle, not Bundle.main
+        // Bundle.main points to the host app (System Settings) when running as screensaver
+        let bundle = Bundle(for: ClockGridView.self)
+        guard let url = bundle.url(forResource: "box_with_cutout_15", withExtension: "usdz") else {
+            print("USDZ file not found in bundle: \(bundle.bundlePath)")
             return nil
         }
         return try? ModelEntity.loadModel(contentsOf: url)

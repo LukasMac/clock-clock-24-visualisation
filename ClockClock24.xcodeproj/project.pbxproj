@@ -11,8 +11,8 @@
 		987AF82F2ECCC6080048C664 /* ClockGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AF82C2ECCC6080048C664 /* ClockGridView.swift */; };
 		987AF8302ECCC6080048C664 /* ClockOrchestrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */; };
 		987AF8312ECCC6080048C664 /* ClockOrchestrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */; };
-		98E8D6F62EDC9D83002F1E2F /* box_with_cutout_13.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 98E8D6F52EDC9D83002F1E2F /* box_with_cutout_13.usdz */; };
-		98E8D6F72EDC9D83002F1E2F /* box_with_cutout_13.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 98E8D6F52EDC9D83002F1E2F /* box_with_cutout_13.usdz */; };
+		989C29F92EE4CDD200A43BAF /* box_with_cutout_15.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 989C29F82EE4CDD200A43BAF /* box_with_cutout_15.usdz */; };
+		989C29FA2EE4CDD200A43BAF /* box_with_cutout_15.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 989C29F82EE4CDD200A43BAF /* box_with_cutout_15.usdz */; };
 		EFA812C8243FA7BF00482522 /* ClockScreenSaverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812C7243FA7BF00482522 /* ClockScreenSaverView.swift */; };
 		EFA812D0243FA8E500482522 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812CF243FA8E500482522 /* AppDelegate.swift */; };
 		EFA812D2243FA8E500482522 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA812D1243FA8E500482522 /* ContentView.swift */; };
@@ -45,8 +45,8 @@
 /* Begin PBXFileReference section */
 		987AF82C2ECCC6080048C664 /* ClockGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockGridView.swift; sourceTree = "<group>"; };
 		987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockOrchestrator.swift; sourceTree = "<group>"; };
-		98E8D6F52EDC9D83002F1E2F /* box_with_cutout_13.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = box_with_cutout_13.usdz; sourceTree = "<group>"; };
-		EFA812B9243FA79800482522 /* GreenSquare.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GreenSquare.saver; sourceTree = BUILT_PRODUCTS_DIR; };
+		989C29F82EE4CDD200A43BAF /* box_with_cutout_15.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = box_with_cutout_15.usdz; sourceTree = "<group>"; };
+		EFA812B9243FA79800482522 /* ClockClock24.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockClock24.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFA812C0243FA79800482522 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EFA812C6243FA7BF00482522 /* GreenSquare-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GreenSquare-Bridging-Header.h"; sourceTree = "<group>"; };
 		EFA812C7243FA7BF00482522 /* ClockScreenSaverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockScreenSaverView.swift; sourceTree = "<group>"; };
@@ -99,7 +99,7 @@
 		EFA812AF243FA79800482522 = {
 			isa = PBXGroup;
 			children = (
-				EFA812BB243FA79800482522 /* GreenSquare */,
+				EFA812BB243FA79800482522 /* ClockClock24 */,
 				EFA812CE243FA8E500482522 /* Preview */,
 				EFA812BA243FA79800482522 /* Products */,
 			);
@@ -108,7 +108,7 @@
 		EFA812BA243FA79800482522 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EFA812B9243FA79800482522 /* GreenSquare.saver */,
+				EFA812B9243FA79800482522 /* ClockClock24.saver */,
 				EFA812CD243FA8E500482522 /* Preview.app */,
 				EFA812E1243FA8E800482522 /* PreviewTests.xctest */,
 				EFA812EC243FA8E800482522 /* PreviewUITests.xctest */,
@@ -116,17 +116,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		EFA812BB243FA79800482522 /* GreenSquare */ = {
+		EFA812BB243FA79800482522 /* ClockClock24 */ = {
 			isa = PBXGroup;
 			children = (
 				EFA812C7243FA7BF00482522 /* ClockScreenSaverView.swift */,
+				989C29F82EE4CDD200A43BAF /* box_with_cutout_15.usdz */,
 				EFA812FF243FAA0D00482522 /* ClockEntity.swift */,
 				987AF82C2ECCC6080048C664 /* ClockGridView.swift */,
 				987AF82D2ECCC6080048C664 /* ClockOrchestrator.swift */,
 				EFA812C0243FA79800482522 /* Info.plist */,
 				EFA812C6243FA7BF00482522 /* GreenSquare-Bridging-Header.h */,
 			);
-			path = GreenSquare;
+			path = ClockClock24;
 			sourceTree = "<group>";
 		};
 		EFA812CE243FA8E500482522 /* Preview */ = {
@@ -148,7 +149,6 @@
 			isa = PBXGroup;
 			children = (
 				EFA812D6243FA8E700482522 /* Preview Assets.xcassets */,
-				98E8D6F52EDC9D83002F1E2F /* box_with_cutout_13.usdz */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -166,9 +166,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		EFA812B8243FA79800482522 /* GreenSquare */ = {
+		EFA812B8243FA79800482522 /* ClockClock24 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EFA812C3243FA79800482522 /* Build configuration list for PBXNativeTarget "GreenSquare" */;
+			buildConfigurationList = EFA812C3243FA79800482522 /* Build configuration list for PBXNativeTarget "ClockClock24" */;
 			buildPhases = (
 				EFA812B4243FA79800482522 /* Headers */,
 				EFA812B5243FA79800482522 /* Sources */,
@@ -179,9 +179,9 @@
 			);
 			dependencies = (
 			);
-			name = GreenSquare;
+			name = ClockClock24;
 			productName = GreenSquare;
-			productReference = EFA812B9243FA79800482522 /* GreenSquare.saver */;
+			productReference = EFA812B9243FA79800482522 /* ClockClock24.saver */;
 			productType = "com.apple.product-type.bundle";
 		};
 		EFA812CC243FA8E500482522 /* Preview */ = {
@@ -264,7 +264,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EFA812B3243FA79800482522 /* Build configuration list for PBXProject "GreenSquare" */;
+			buildConfigurationList = EFA812B3243FA79800482522 /* Build configuration list for PBXProject "ClockClock24" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -277,7 +277,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EFA812B8243FA79800482522 /* GreenSquare */,
+				EFA812B8243FA79800482522 /* ClockClock24 */,
 				EFA812CC243FA8E500482522 /* Preview */,
 				EFA812E0243FA8E800482522 /* PreviewTests */,
 				EFA812EB243FA8E800482522 /* PreviewUITests */,
@@ -290,7 +290,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98E8D6F62EDC9D83002F1E2F /* box_with_cutout_13.usdz in Resources */,
+				989C29F92EE4CDD200A43BAF /* box_with_cutout_15.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,10 +298,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98E8D6F72EDC9D83002F1E2F /* box_with_cutout_13.usdz in Resources */,
 				EFA812DA243FA8E700482522 /* Main.storyboard in Resources */,
 				EFA812D7243FA8E700482522 /* Preview Assets.xcassets in Resources */,
 				EFA812D4243FA8E700482522 /* Assets.xcassets in Resources */,
+				989C29FA2EE4CDD200A43BAF /* box_with_cutout_15.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -685,7 +685,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EFA812B3243FA79800482522 /* Build configuration list for PBXProject "GreenSquare" */ = {
+		EFA812B3243FA79800482522 /* Build configuration list for PBXProject "ClockClock24" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EFA812C1243FA79800482522 /* Debug */,
@@ -694,7 +694,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EFA812C3243FA79800482522 /* Build configuration list for PBXNativeTarget "GreenSquare" */ = {
+		EFA812C3243FA79800482522 /* Build configuration list for PBXNativeTarget "ClockClock24" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EFA812C4243FA79800482522 /* Debug */,
