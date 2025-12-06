@@ -2,7 +2,7 @@
 
 A macOS screensaver that displays the current time using a grid of animated 3D clocks, inspired by the famous [ClockClock24](https://clockclock24.com/) installation by Humans since 1982.
 
-![ClockClock24 Preview](preview-image.png)
+![ClockClock24 Preview](preview-image.jpeg)
 
 ## Features
 
